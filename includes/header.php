@@ -19,7 +19,7 @@
         <link rel="apple-touch-icon" sizes="120x120" href="touch-icon-iphone-retina.png">
         <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad-retina.png">
 
-		<link rel="stylesheet" href="/old%20guard/css/styles.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="css/styles.css" type="text/css" media="screen" />
 		<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Arimo&subset=latin' />
 
         <script type="text/javascript">
