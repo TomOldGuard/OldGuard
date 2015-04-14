@@ -44,10 +44,3 @@ CRD.Helper.init(
 {
 	email: $('#email')
 });
-
-/* ------------- FitVids ------------------ */
-
-$(document).ready(function(){
-  // Target your .container, .wrapper, .post, etc.
-  $("article").fitVids();
-});
