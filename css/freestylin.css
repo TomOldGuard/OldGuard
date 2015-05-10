@@ -1,47 +1,133 @@
 *, img, body{ margin: 0; padding: 0; border: 0; }
 
 body{
-	font-family: Georgia, Times, 'Times New Roman';
-	color: #545454;
+	font-family: sans-serif;
+	color: #B4B3B2;
 	overflow-x: hidden;
-	line-height: 20px;
+	line-height: 24px;
+	font-size: 12px;
 }
 
 header{
-	padding: 36px 0 0 0 ;
+	width: 100%;
+	padding: 64px 0 42px 0;
+}
 
+header, .row, .about{
+	max-width: 1200px;
+	margin: 0 auto;
 }
 
 .logo{
 	width: 48px;
 	opacity: 0.75;
-	padding: 0 0 18px 6%;
 	margin-left: -10px;
+	padding: 0 0 0 0%;
+}
+
+.controls{
+	border-bottom: 1px solid #efefef;
+	background-color: yellow;
+
+}
+.row{
+	border-bottom: 1px solid #efefef;
+    padding: 12px 2%;	
+}
+
+.bold{
+	color: #282828;
+	font-weight: bold;
+	letter-spacing: -0.04em;
+	text-transform: capitalize;
+	font-size: 13px;
+	text-rendering: optimizelegibility;
+}
+
+.title-sort{
+	font-size: 14px;
+	position: absolute;
+}
+
+.date-sort{
+	left: 72%;
+	font-size: 14px;
+	position: absolute;
+}
+
+.row a{
+	margin-right: 5px;
+	color: #B4B3B2;
+}
+
+.tags{
+	left: 38%;
+	position: absolute;
+}
+
+.date{
+	left: 72%;
+	position: absolute;
+}
+
+.title{
+	padding: 0 0 0 10px;
+	position: absolute;
 }
 
 .intro{
-	padding: 0px 6% 48px 6%;
-	background-color: #fff;
-	margin: 0 auto;
+	line-height: 20px;
+	position: absolute;
+	width: 25%;
+	padding: 48px 4% 48px 0;
 }
 
-hr{
-	height: 0px;
-	border-bottom: 1px solid #ddd;
-	margin: -1px 0px 24px 0px;
-	max-width: 48px;
+.intro p{
+	color: #545454;
+	padding-bottom: 8px;
 }
 
-li{
+.social{
+	left: 38%;
+	position: absolute;
+	padding: 48px 2% 48px 0;
+}
+
+.social ul{
 	list-style-type: none;
-	margin: 0 0 8px 0;
 }
+
+/*
+.line-one{
+	border-right:1px solid #efefef;
+	height: 100%;
+	width: 0;
+	left: 25%;
+	position: absolute;
+}
+
+.line-two{
+	border-right: 1px solid #efefef;
+	height: 100%;
+	width: 0;
+	left: 50%;
+	position: absolute;
+}
+
+.line-three{
+	border-right: 1px solid #efefef;
+	height: 100%;
+	width: 0;
+	left: 75%;
+	position: absolute;
+}
+*/
 
 /*type*/
 h1{ 
 	color: #1a1a1a;
 	font-size: 20px;
-	padding: 0px 0px 24px 6%;
+	padding: 0px 0px 24px 8%;
 	font-weight: normal;
 	line-height: 24px;
 }
@@ -60,12 +146,6 @@ h2{
 	margin: 24px 0px 24px 0px;
 }
 
-p{
-	padding: 0px 0px 24px 0px;
-	font-size: 15px;
-	max-width: 420px;
-}
-
 /*links*/
 
 a:active{ outline: none; }
@@ -80,12 +160,6 @@ ul a:link, ul a:visited{
 	color: #13A4F2;
 	border-bottom: 1px dotted #13A4F2;
 	padding-bottom: 2px;
-	font-family: 'Arimo', Arial, Helvetica, Verdana;
-	letter-spacing: 1px;
-	font-size: 12px;
-	letter-spacing: 2px;
-	text-transform: uppercase;
-	line-height: 22px;
 }
 
 h2 a:link, h2 a:visited{
@@ -107,93 +181,13 @@ p a:hover, ul a:hover, h2 a:hover{
 	color: #aaaaaa;
 }
 
-.anchorlink:link, .anchorlink:visited {
-	background: url('../images/layout/sprite.png') no-repeat top left;
-	padding-left: 18px;
-	background-position: 0 -106px;
-	-webkit-transition: color 0.25s ease;
-	-moz-transition: color 0.25s ease;
-	-o-transition: color 0.25s ease;
-	transition: color 0.25s ease;
-}
-
-.anchorlink:hover {
-	background: url('../images/layout/sprite.png') no-repeat top left;
-	background-position: 0 -82px;
-}
-
 /*text highlighting*/
 ::selection{ background: #E8E8E8; color: #13A4F2; } /* Safari */
 ::-moz-selection{ background: #E8E8E8; color: #13A4F2; } /* Firefox */
 
-
-.row{
-	border-bottom: 1px solid #efefef;
-}
-
-.row{
-	font-family: sans-serif;
-	font-size: 12px;
-	color: #B4B3B2;
-	line-height: 24px;
-    padding: 12px 34px;
-}
-
-.bold{
-	color: #282828;
-	font-weight: bold;
-	letter-spacing: -0.04em;
-	text-transform: capitalize;
-	font-size: 13px;
-	text-rendering: optimizelegibility;
-
-}
-
-.tags{
-	left: 500px;
-	position: absolute;
-}
-
-.date{
-	left: 300px;
-	position: absolute;
-}
-
-.title{
-	left: 60px;
-	position: absolute;	
-}
-
-
 /*media queries*/
 
 @media screen and (min-width: 500px) {
-
-body{
-	line-height: 22px;
-}
-
-header{
-	padding: 76px 0 0 0 ;
-
-}
-
-.logo{
-	width: 54px;
-	padding: 0 0 24px 6%;
-}
-
-p{
-	line-height: 24px;
-}
-
-li{
-	margin: 0 0 1px 0;
-}
-
-hr{
-	margin: 5px 0px 30px 0px;
-}
 
 
 }
