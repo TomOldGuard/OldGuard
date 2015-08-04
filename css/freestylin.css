@@ -1,129 +1,27 @@
 *, img, body{ margin: 0; padding: 0; border: 0; }
 
 body{
-	font-family: sans-serif;
+	font-family: 'Realtime-Regular', sans-serif;
 	color: #B4B3B2;
 	overflow-x: hidden;
-	line-height: 24px;
-	font-size: 12px;
-}
-
-header{
-	width: 100%;
-	padding: 64px 0 42px 0;
-}
-
-header, .row, .about{
-	max-width: 1200px;
-	margin: 0 auto;
-}
-
-.logo{
-	width: 48px;
-	opacity: 0.75;
-	margin-left: -10px;
-	padding: 0 0 0 0%;
-}
-
-.controls{
-	border-bottom: 1px solid #efefef;
-	background-color: yellow;
-
-}
-.row{
-	border-bottom: 1px solid #efefef;
-    padding: 12px 2%;	
-}
-
-.bold{
-	color: #282828;
-	font-weight: bold;
-	letter-spacing: -0.04em;
-	text-transform: capitalize;
+	line-height: 16px;
 	font-size: 13px;
-	text-rendering: optimizelegibility;
 }
 
-.title-sort{
-	font-size: 14px;
-	position: absolute;
+/* -------------------- type -------------------- */
+
+@font-face {
+    font-family: 'Realtime-Regular';
+    src: url('../fonts/realtime.eot');
+    src: url('../fonts/realtime.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/realtime.woff2') format('woff2'),
+         url('../fonts/realtime.woff') format('woff'),
+         url('../fonts/realtime.ttf') format('truetype'),
+         url('../fonts/realtime.svg#ywftsvg') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 
-.date-sort{
-	left: 72%;
-	font-size: 14px;
-	position: absolute;
-}
-
-.row a{
-	margin-right: 5px;
-	color: #B4B3B2;
-}
-
-.tags{
-	left: 38%;
-	position: absolute;
-}
-
-.date{
-	left: 72%;
-	position: absolute;
-}
-
-.title{
-	padding: 0 0 0 10px;
-	position: absolute;
-}
-
-.intro{
-	line-height: 20px;
-	position: absolute;
-	width: 25%;
-	padding: 48px 4% 48px 0;
-}
-
-.intro p{
-	color: #545454;
-	padding-bottom: 8px;
-}
-
-.social{
-	left: 38%;
-	position: absolute;
-	padding: 48px 2% 48px 0;
-}
-
-.social ul{
-	list-style-type: none;
-}
-
-/*
-.line-one{
-	border-right:1px solid #efefef;
-	height: 100%;
-	width: 0;
-	left: 25%;
-	position: absolute;
-}
-
-.line-two{
-	border-right: 1px solid #efefef;
-	height: 100%;
-	width: 0;
-	left: 50%;
-	position: absolute;
-}
-
-.line-three{
-	border-right: 1px solid #efefef;
-	height: 100%;
-	width: 0;
-	left: 75%;
-	position: absolute;
-}
-*/
-
-/*type*/
 h1{ 
 	color: #1a1a1a;
 	font-size: 20px;
@@ -132,21 +30,7 @@ h1{
 	line-height: 24px;
 }
 
-h1 i{
-	color: #13A4F2;
-}
-
-h2{
-	font-family: 'Arimo', Arial, Helvetica, Verdana;
-	letter-spacing: 1.5px;
-	font-size: 14px;
-	letter-spacing: 2px;
-	font-weight: normal;
-	text-transform: uppercase;
-	margin: 24px 0px 24px 0px;
-}
-
-/*links*/
+/* -------------------- links -------------------- */
 
 a:active{ outline: none; }
 a:focus{ -moz-outline-style: none; outline-style: none; }
@@ -168,7 +52,7 @@ h2 a:link, h2 a:visited{
 	padding-bottom: 2px;
 }
 
-a:link, a:visited{
+a:link, a:visited, .row, .title, .number{
 	text-decoration: none;
 	-webkit-transition: all 0.25s ease;
 	-moz-transition: all 0.25s ease;
@@ -181,13 +65,209 @@ p a:hover, ul a:hover, h2 a:hover{
 	color: #aaaaaa;
 }
 
-/*text highlighting*/
+/* -------------------- header -------------------- */
+
+header{
+	width: 100%;
+	padding: 34px 0 0 0;
+}
+
+header, .row, .about, .controls{
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.logo{
+	width: 48px;
+	opacity: 0.75;
+}
+
+/* -------------------- table -------------------- */
+
+.controls{
+	margin-bottom: 24px;
+}
+
+.title-sort{
+	position: absolute;
+	right: 5%;
+	margin-right: 5px;
+	color: #B4B3B2;
+}
+
+.controls a{
+	margin-right: 5px;
+	color: #B4B3B2;
+}
+
+.title{
+	text-transform: capitalize;
+	text-rendering: optimizelegibility;
+	color: #282828;
+}
+
+.number{
+	color: #282828;
+}
+
+.tags{
+	display: block;
+	left: 150px;
+	padding: 0 0 0 25px;
+}
+
+.date{
+	display: block;
+	padding: 0 0 0 25px;
+}
+
+.row{
+	border-top: 1px solid #efefef;
+    padding: 14px 0;
+    display: block;
+}
+
+.row:link, .row:visited{
+	color: #B4B3B2;
+}
+
+/* -------------------- footer -------------------- */
+
+.about{
+	padding: 24px 0;
+}
+
+.intro{
+	padding: 0px 4% 16px 4%;
+}
+
+.intro p{
+	color: #282828;
+	padding-bottom: 8px;
+}
+
+.blurb{
+	padding: 0px 4% 16px 4%;
+}
+
+.blurb p{
+	color: #282828	;
+	padding-bottom: 8px;
+}
+
+.social{
+	padding: 0px 4% 24px 4%;
+}
+
+.social ul{
+	list-style-type: none;
+}
+
+/* -------------------- text highlighting -------------------- */
+
 ::selection{ background: #E8E8E8; color: #13A4F2; } /* Safari */
 ::-moz-selection{ background: #E8E8E8; color: #13A4F2; } /* Firefox */
 
-/*media queries*/
+/* -------------------- media queries -------------------- */
 
 @media screen and (min-width: 500px) {
 
+body{
+	line-height: 24px;
+	font-size: 14px;
+}
+
+/* -------------------- header -------------------- */
+
+header{
+	width: 100%;
+	padding: 64px 0 42px 0;
+}
+
+.logo{
+	width: 48px;
+	opacity: 0.75;
+	margin-left: 3%;
+}
+
+/* -------------------- table -------------------- */
+
+.controls{
+	position: relative;
+}
+
+.title-sort{
+	position: absolute;
+	left: 4%;
+}
+
+.number{
+	padding-bottom: 2px;
+	border-bottom: 1px dotted #fff;
+	margin-left: 4%;
+	width: 2.25%;
+	display: inline-block;
+}
+
+.title{
+	padding: 0 0 2px 0px;
+	border-bottom: 1px dotted #fff;
+	width: 29.75%;
+	margin-right: 4%;
+	display: inline-block;
+}
+
+.tags{
+	display: inline-block;
+	padding: 0;
+	width: 35%;
+	margin-right: 4%;
+}
+
+.date{
+
+	display: inline;
+	padding: 0;
+	width: 17%;
+	margin-right: 4%;
+	display: inline-block;
+}
+
+.row:hover{
+	color: #282828;
+}
+
+.row:hover > .title {
+	color: #282828;
+	border-bottom: 1px dotted #282828;
+}
+
+.row:hover > .number {
+	color: #282828;
+	border-bottom: 1px dotted #282828;
+}
+
+/* -------------------- footer -------------------- */
+
+.intro{
+	line-height: 18px;
+	position: absolute;
+	width: 26%;
+	padding: 48px 4% 48px 0;
+}
+
+.blurb{
+	line-height: 18px;
+	position: absolute;
+	left: 38%;
+	width: 30%;
+	padding: 48px 4% 48px 0;
+}
+
+.social{
+	left: 75%;
+	position: absolute;
+	padding: 48px 2% 48px 0;
+}
 
 }
