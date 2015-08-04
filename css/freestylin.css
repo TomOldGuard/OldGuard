@@ -52,7 +52,7 @@ h2 a:link, h2 a:visited{
 	padding-bottom: 2px;
 }
 
-a:link, a:visited, .row, .title, .number{
+a:link, a:visited, .row, .title, .number, .hack{
 	text-decoration: none;
 	-webkit-transition: all 0.25s ease;
 	-moz-transition: all 0.25s ease;
@@ -125,6 +125,7 @@ header, .row, .about, .controls{
 	border-top: 1px solid #efefef;
     padding: 14px 0;
     display: block;
+
 }
 
 .row:link, .row:visited{
@@ -181,7 +182,7 @@ body{
 
 header{
 	width: 100%;
-	padding: 64px 0 42px 0;
+	padding: 80px 0 42px 0;
 }
 
 .logo{
@@ -194,6 +195,7 @@ header{
 
 .controls{
 	position: relative;
+	margin-bottom: 36px;
 }
 
 .title-sort{
@@ -202,10 +204,11 @@ header{
 }
 
 .number{
-	padding-bottom: 2px;
+	padding-bottom: 0px;
 	border-bottom: 1px dotted #fff;
 	margin-left: 4%;
 	width: 2.25%;
+	vertical-align: top;
 	display: inline-block;
 }
 
@@ -215,6 +218,13 @@ header{
 	width: 29.75%;
 	margin-right: 4%;
 	display: inline-block;
+	vertical-align: top;
+
+}
+
+.hack{
+	padding: 0 0 2px 0px;
+
 }
 
 .tags{
@@ -222,6 +232,7 @@ header{
 	padding: 0;
 	width: 35%;
 	margin-right: 4%;
+    vertical-align: top;
 }
 
 .date{
@@ -237,12 +248,7 @@ header{
 	color: #282828;
 }
 
-.row:hover > .title {
-	color: #282828;
-	border-bottom: 1px dotted #282828;
-}
-
-.row:hover > .number {
+.row:hover > .title> .hack, .row:hover > .number> .hack {
 	color: #282828;
 	border-bottom: 1px dotted #282828;
 }
@@ -251,23 +257,24 @@ header{
 
 .intro{
 	line-height: 18px;
-	position: absolute;
-	width: 26%;
-	padding: 48px 4% 48px 0;
+	width: 32%;
+	padding: 36px 4% 48px 4%;
+	display: inline-block;
+	vertical-align: top;
 }
 
 .blurb{
 	line-height: 18px;
-	position: absolute;
-	left: 38%;
-	width: 30%;
-	padding: 48px 4% 48px 0;
+	width: 35%;
+	padding: 36px 4% 48px 0;
+	display: inline-block;
 }
 
 .social{
-	left: 75%;
-	position: absolute;
-	padding: 48px 2% 48px 0;
+	width: 17%;
+	padding: 36px 4% 48px 0;
+	display: inline-block;
+	vertical-align: top;
 }
 
 }
