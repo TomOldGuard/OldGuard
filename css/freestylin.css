@@ -182,7 +182,7 @@ body{
 
 header{
 	width: 100%;
-	padding: 80px 0 42px 0;
+	padding: 88px 0 30px 0;
 }
 
 .logo{
@@ -205,7 +205,6 @@ header{
 
 .number{
 	padding-bottom: 0px;
-	border-bottom: 1px dotted #fff;
 	margin-left: 4%;
 	width: 2.25%;
 	vertical-align: top;
@@ -214,17 +213,15 @@ header{
 
 .title{
 	padding: 0 0 2px 0px;
-	border-bottom: 1px dotted #fff;
 	width: 29.75%;
 	margin-right: 4%;
 	display: inline-block;
 	vertical-align: top;
-
 }
 
 .hack{
 	padding: 0 0 2px 0px;
-
+	border-bottom: 1px dotted #fff;
 }
 
 .tags{
@@ -236,7 +233,6 @@ header{
 }
 
 .date{
-
 	display: inline;
 	padding: 0;
 	width: 17%;
@@ -255,26 +251,32 @@ header{
 
 /* -------------------- footer -------------------- */
 
+.about{
+	padding: 30px 0 36px 0;
+}
+
+.about section{
+	vertical-align: top;
+}
+
 .intro{
 	line-height: 18px;
 	width: 32%;
-	padding: 36px 4% 48px 4%;
+	padding: 0 4% 0 4%;
 	display: inline-block;
-	vertical-align: top;
 }
 
 .blurb{
 	line-height: 18px;
-	width: 35%;
-	padding: 36px 4% 48px 0;
+	width: 33%;
+	padding: 0 6% 0 0;
 	display: inline-block;
 }
 
 .social{
 	width: 17%;
-	padding: 36px 4% 48px 0;
+	padding: 0 4% 0 0;
 	display: inline-block;
-	vertical-align: top;
 }
 
 }
