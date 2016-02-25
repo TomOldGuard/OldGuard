@@ -8,6 +8,11 @@ body{
 	font-size: 13px;
 }
 
+.home{
+	background-color: #FF002B;
+	position: relative;
+}
+
 /* -------------------- type -------------------- */
 
 @font-face {
@@ -21,7 +26,7 @@ body{
     font-weight: normal;
     font-style: normal;
 }
-
+/*
 h1{ 
 	color: #1a1a1a;
 	font-size: 20px;
@@ -66,7 +71,7 @@ p a:hover, ul a:hover, h2 a:hover{
 }
 
 /* -------------------- header -------------------- */
-
+/*
 header{
 	width: 100%;
 	padding: 34px 0 0 0;
@@ -82,8 +87,78 @@ header, .row, .about, .controls{
 	opacity: 0.75;
 }
 
-/* -------------------- table -------------------- */
+header{
+	width: 100%;
+	padding: 0px;
+	margin: 0px;
+	top: 0;
+}
+*/
 
+header{
+	position: fixed;
+}
+
+nav{
+	display: table-row;
+}
+
+nav a{
+	background-color: #fff;
+	padding: 7px 10px 10px 10px;
+	margin: 0px 1px 1px 0;
+	color: #1a1a1a;
+	float: left;
+}
+
+nav a:hover{
+	background-color: #FF002B;
+}
+
+.title{
+	display: table-row;
+}
+
+.title a{
+	background-color: #fff;
+	padding: 7px 10px 10px 10px;
+	margin: 0px 1px 0 0;
+float: left;
+}
+
+.title a:hover{
+	background-color: #FF002B;
+}
+
+.title p{
+	background-color: #444;
+	padding: 7px 10px 10px 10px;
+	margin: 0px 1px 0 0;
+	color: #fff;
+	float: left;
+}
+
+.content{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  resize: both;
+  overflow: auto;
+}
+
+.content img{
+	max-height: 95vh;
+	max-width: 95vw;
+  resize: both;
+  overflow: auto;
+
+
+}
+
+/* -------------------- table -------------------- */
+/*
 .controls{
 	margin-bottom: 24px;
 }
@@ -133,7 +208,7 @@ header, .row, .about, .controls{
 }
 
 /* -------------------- footer -------------------- */
-
+/*
 .about{
 	padding: 24px 0;
 }
@@ -170,16 +245,16 @@ header, .row, .about, .controls{
 ::-moz-selection{ background: #E8E8E8; color: #13A4F2; } /* Firefox */
 
 /* -------------------- media queries -------------------- */
-
+/*
 @media screen and (min-width: 500px) {
 
 body{
 	line-height: 24px;
 	font-size: 14px;
 }
-
+*/
 /* -------------------- header -------------------- */
-
+/*
 header{
 	width: 100%;
 	padding: 88px 0 30px 0;
@@ -192,7 +267,7 @@ header{
 }
 
 /* -------------------- table -------------------- */
-
+/*
 .controls{
 	position: relative;
 	margin-bottom: 36px;
@@ -250,7 +325,7 @@ header{
 }
 
 /* -------------------- footer -------------------- */
-
+/*
 .about{
 	padding: 30px 0 36px 0;
 }
