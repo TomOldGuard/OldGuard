@@ -2,7 +2,6 @@
 
 body{
 	font-family: 'Realtime-Regular', sans-serif;
-	color: #B4B3B2;
 	overflow-x: hidden;
 	line-height: 16px;
 	font-size: 13px;
@@ -26,14 +25,6 @@ body{
     font-weight: normal;
     font-style: normal;
 }
-/*
-h1{ 
-	color: #1a1a1a;
-	font-size: 20px;
-	padding: 0px 0px 24px 8%;
-	font-weight: normal;
-	line-height: 24px;
-}
 
 /* -------------------- links -------------------- */
 
@@ -46,8 +37,8 @@ p a:link, p a:visited{
 }
 
 ul a:link, ul a:visited{
-	color: #13A4F2;
-	border-bottom: 1px dotted #13A4F2;
+	color: #fff;
+	border-bottom: 1px dotted #fff;
 	padding-bottom: 2px;
 }
 
@@ -71,29 +62,6 @@ p a:hover, ul a:hover, h2 a:hover{
 }
 
 /* -------------------- header -------------------- */
-/*
-header{
-	width: 100%;
-	padding: 34px 0 0 0;
-}
-
-header, .row, .about, .controls{
-	max-width: 1200px;
-	margin: 0 auto;
-}
-
-.logo{
-	width: 48px;
-	opacity: 0.75;
-}
-
-header{
-	width: 100%;
-	padding: 0px;
-	margin: 0px;
-	top: 0;
-}
-*/
 
 header{
 	position: fixed;
@@ -115,22 +83,22 @@ nav a:hover{
 	background-color: #FF002B;
 }
 
-.title{
+.name{
 	display: table-row;
 }
 
-.title a{
+.name a{
 	background-color: #fff;
 	padding: 7px 10px 10px 10px;
 	margin: 0px 1px 0 0;
-float: left;
+	float: left;
 }
 
-.title a:hover{
+.name a:hover{
 	background-color: #FF002B;
 }
 
-.title p{
+.name p{
 	background-color: #444;
 	padding: 7px 10px 10px 10px;
 	margin: 0px 1px 0 0;
@@ -139,88 +107,68 @@ float: left;
 }
 
 .content{
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  resize: both;
-  overflow: auto;
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	resize: both;
+	overflow: auto;
 }
 
 .content img{
 	max-height: 95vh;
 	max-width: 95vw;
-  resize: both;
-  overflow: auto;
+	resize: both;
+	overflow: auto;
 }
 
 .full img{
 	height: 100vh;
 	width: 100vw;
-
 }
-
 
 
 /* -------------------- table -------------------- */
-/*
-.controls{
-	margin-bottom: 24px;
-}
 
-.title-sort{
-	position: absolute;
-	right: 5%;
-	margin-right: 5px;
-	color: #B4B3B2;
-}
-
-.controls a{
-	margin-right: 5px;
-	color: #B4B3B2;
+.rows{
+	padding-top: 100px;
 }
 
 .title{
 	text-transform: capitalize;
 	text-rendering: optimizelegibility;
-	color: #282828;
+	color: #1a1a1a;
 }
 
 .number{
-	color: #282828;
-}
-
-.tags{
-	display: block;
-	left: 150px;
-	padding: 0 0 0 25px;
-}
-
-.date{
-	display: block;
-	padding: 0 0 0 25px;
+	color: #1a1a1a	;
 }
 
 .row{
-	border-top: 1px solid #efefef;
     padding: 14px 0;
     display: block;
-
+    background-color: #fff;
+    margin: 0px 0px 1px 0px;
 }
 
 .row:link, .row:visited{
-	color: #B4B3B2;
+	color: #fff;
 }
 
 /* -------------------- footer -------------------- */
-/*
+
 .about{
 	padding: 24px 0;
 }
 
+.about p{
+	float: left;
+}
+
 .intro{
 	padding: 0px 4% 16px 4%;
+	float: left;
 }
 
 .intro p{
@@ -228,17 +176,9 @@ float: left;
 	padding-bottom: 8px;
 }
 
-.blurb{
-	padding: 0px 4% 16px 4%;
-}
-
-.blurb p{
-	color: #282828	;
-	padding-bottom: 8px;
-}
-
 .social{
 	padding: 0px 4% 24px 4%;
+	float: left;
 }
 
 .social ul{
@@ -247,42 +187,14 @@ float: left;
 
 /* -------------------- text highlighting -------------------- */
 
-::selection{ background: #E8E8E8; color: #13A4F2; } /* Safari */
-::-moz-selection{ background: #E8E8E8; color: #13A4F2; } /* Firefox */
+::selection{ background: #ffffff; color: #282828; } /* Safari */
+::-moz-selection{ background: #ffffff; color: #282828; } /* Firefox */
 
 /* -------------------- media queries -------------------- */
-/*
+
 @media screen and (min-width: 500px) {
 
-body{
-	line-height: 24px;
-	font-size: 14px;
-}
-*/
-/* -------------------- header -------------------- */
-/*
-header{
-	width: 100%;
-	padding: 88px 0 30px 0;
-}
-
-.logo{
-	width: 48px;
-	opacity: 0.75;
-	margin-left: 3%;
-}
-
 /* -------------------- table -------------------- */
-/*
-.controls{
-	position: relative;
-	margin-bottom: 36px;
-}
-
-.title-sort{
-	position: absolute;
-	left: 4%;
-}
 
 .number{
 	padding-bottom: 0px;
@@ -300,38 +212,18 @@ header{
 	vertical-align: top;
 }
 
-.hack{
-	padding: 0 0 2px 0px;
-	border-bottom: 1px dotted #fff;
-}
-
-.tags{
-	display: inline-block;
-	padding: 0;
-	width: 35%;
-	margin-right: 4%;
-    vertical-align: top;
-}
-
-.date{
-	display: inline;
-	padding: 0;
-	width: 17%;
-	margin-right: 4%;
-	display: inline-block;
-}
-
 .row:hover{
 	color: #282828;
+	background-color: #FF002B;
 }
 
-.row:hover > .title> .hack, .row:hover > .number> .hack {
-	color: #282828;
-	border-bottom: 1px dotted #282828;
+.row:visited{
+	text-decoration: line-through;
 }
+
 
 /* -------------------- footer -------------------- */
-/*
+
 .about{
 	padding: 30px 0 36px 0;
 }
@@ -344,13 +236,6 @@ header{
 	line-height: 18px;
 	width: 32%;
 	padding: 0 4% 0 4%;
-	display: inline-block;
-}
-
-.blurb{
-	line-height: 18px;
-	width: 33%;
-	padding: 0 6% 0 0;
 	display: inline-block;
 }
 
