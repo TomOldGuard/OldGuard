@@ -1,72 +1,32 @@
 *, img, body{ margin: 0; padding: 0; border: 0; }
 
 body{
-	font-family: Georgia, Times, 'Times New Roman';
-	color: #545454;
+	font-family: 'Realtime-Regular', sans-serif;
 	overflow-x: hidden;
-	line-height: 20px;
+	line-height: 16px;
+	font-size: 13px;
 }
 
-header{
-	padding: 36px 0 0 0 ;
-
+.home{
+	background-color: #FF002B;
+	position: relative;
 }
 
-.logo{
-	width: 48px;
-	opacity: 0.75;
-	padding: 0 0 18px 6%;
-	margin-left: -10px;
+/* -------------------- type -------------------- */
+
+@font-face {
+    font-family: 'Realtime-Regular';
+    src: url('../fonts/realtime.eot');
+    src: url('../fonts/realtime.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/realtime.woff2') format('woff2'),
+         url('../fonts/realtime.woff') format('woff'),
+         url('../fonts/realtime.ttf') format('truetype'),
+         url('../fonts/realtime.svg#ywftsvg') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 
-.intro{
-	padding: 0px 6% 48px 6%;
-	background-color: #fff;
-	margin: 0 auto;
-}
-
-hr{
-	height: 0px;
-	border-bottom: 1px solid #ddd;
-	margin: -1px 0px 24px 0px;
-	max-width: 48px;
-}
-
-li{
-	list-style-type: none;
-	margin: 0 0 8px 0;
-}
-
-/*type*/
-h1{ 
-	color: #1a1a1a;
-	font-size: 20px;
-	padding: 0px 0px 24px 6%;
-	font-weight: normal;
-	line-height: 24px;
-}
-
-h1 i{
-	color: #13A4F2;
-}
-
-h2{
-	font-family: 'Arimo', Arial, Helvetica, Verdana;
-	letter-spacing: 1.5px;
-	font-size: 14px;
-	letter-spacing: 2px;
-	font-weight: normal;
-	text-transform: uppercase;
-	margin: 24px 0px 24px 0px;
-}
-
-p{
-	padding: 0px 0px 24px 0px;
-	font-size: 15px;
-	max-width: 420px;
-}
-
-/*links*/
+/* -------------------- links -------------------- */
 
 a:active{ outline: none; }
 a:focus{ -moz-outline-style: none; outline-style: none; }
@@ -77,15 +37,9 @@ p a:link, p a:visited{
 }
 
 ul a:link, ul a:visited{
-	color: #13A4F2;
-	border-bottom: 1px dotted #13A4F2;
+	color: #fff;
+	border-bottom: 1px dotted #fff;
 	padding-bottom: 2px;
-	font-family: 'Arimo', Arial, Helvetica, Verdana;
-	letter-spacing: 1px;
-	font-size: 12px;
-	letter-spacing: 2px;
-	text-transform: uppercase;
-	line-height: 22px;
 }
 
 h2 a:link, h2 a:visited{
@@ -94,7 +48,7 @@ h2 a:link, h2 a:visited{
 	padding-bottom: 2px;
 }
 
-a:link, a:visited{
+a:link, a:visited, .row, .title, .number, .hack{
 	text-decoration: none;
 	-webkit-transition: all 0.25s ease;
 	-moz-transition: all 0.25s ease;
@@ -107,54 +61,188 @@ p a:hover, ul a:hover, h2 a:hover{
 	color: #aaaaaa;
 }
 
-.anchorlink:link, .anchorlink:visited {
-	background: url('../images/layout/sprite.png') no-repeat top left;
-	padding-left: 18px;
-	background-position: 0 -106px;
-	-webkit-transition: color 0.25s ease;
-	-moz-transition: color 0.25s ease;
-	-o-transition: color 0.25s ease;
-	transition: color 0.25s ease;
+/* -------------------- header -------------------- */
+
+header{
+	position: fixed;
 }
 
-.anchorlink:hover {
-	background: url('../images/layout/sprite.png') no-repeat top left;
-	background-position: 0 -82px;
+nav{
+	display: table-row;
 }
 
-/*text highlighting*/
-::selection{ background: #E8E8E8; color: #13A4F2; } /* Safari */
-::-moz-selection{ background: #E8E8E8; color: #13A4F2; } /* Firefox */
+nav a{
+	background-color: #fff;
+	padding: 7px 10px 10px 10px;
+	margin: 0px 1px 1px 0;
+	color: #1a1a1a;
+	float: left;
+}
 
-/*media queries*/
+nav a:hover{
+	background-color: #FF002B;
+}
+
+.name{
+	display: table-row;
+}
+
+.name a{
+	background-color: #fff;
+	padding: 7px 10px 10px 10px;
+	margin: 0px 1px 0 0;
+	float: left;
+}
+
+.name a:hover{
+	background-color: #FF002B;
+}
+
+.name p{
+	background-color: #444;
+	padding: 7px 10px 10px 10px;
+	margin: 0px 1px 0 0;
+	color: #fff;
+	float: left;
+}
+
+.content{
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	resize: both;
+	overflow: auto;
+}
+
+.content img{
+	max-height: 95vh;
+	max-width: 95vw;
+	resize: both;
+	overflow: auto;
+}
+
+.full img{
+	height: 100vh;
+	width: 100vw;
+}
+
+
+/* -------------------- table -------------------- */
+
+.rows{
+	padding-top: 100px;
+}
+
+.title{
+	text-transform: capitalize;
+	text-rendering: optimizelegibility;
+	color: #1a1a1a;
+}
+
+.number{
+	color: #1a1a1a	;
+}
+
+.row{
+    padding: 14px 0;
+    display: block;
+    background-color: #fff;
+    margin: 0px 0px 1px 0px;
+}
+
+.row:link, .row:visited{
+	color: #fff;
+}
+
+/* -------------------- footer -------------------- */
+
+.about{
+	padding: 24px 0;
+}
+
+.about p{
+	float: left;
+}
+
+.intro{
+	padding: 0px 4% 16px 4%;
+	float: left;
+}
+
+.intro p{
+	color: #282828;
+	padding-bottom: 8px;
+}
+
+.social{
+	padding: 0px 4% 24px 4%;
+	float: left;
+}
+
+.social ul{
+	list-style-type: none;
+}
+
+/* -------------------- text highlighting -------------------- */
+
+::selection{ background: #ffffff; color: #282828; } /* Safari */
+::-moz-selection{ background: #ffffff; color: #282828; } /* Firefox */
+
+/* -------------------- media queries -------------------- */
 
 @media screen and (min-width: 500px) {
 
-body{
-	line-height: 22px;
+/* -------------------- table -------------------- */
+
+.number{
+	padding-bottom: 0px;
+	margin-left: 4%;
+	width: 2.25%;
+	vertical-align: top;
+	display: inline-block;
 }
 
-header{
-	padding: 76px 0 0 0 ;
-
+.title{
+	padding: 0 0 2px 0px;
+	width: 29.75%;
+	margin-right: 4%;
+	display: inline-block;
+	vertical-align: top;
 }
 
-.logo{
-	width: 54px;
-	padding: 0 0 24px 6%;
+.row:hover{
+	color: #282828;
+	background-color: #FF002B;
 }
 
-p{
-	line-height: 24px;
+.row:visited{
+	text-decoration: line-through;
 }
 
-li{
-	margin: 0 0 1px 0;
+
+/* -------------------- footer -------------------- */
+
+.about{
+	padding: 30px 0 36px 0;
 }
 
-hr{
-	margin: 5px 0px 30px 0px;
+.about section{
+	vertical-align: top;
 }
 
+.intro{
+	line-height: 18px;
+	width: 32%;
+	padding: 0 4% 0 4%;
+	display: inline-block;
+}
+
+.social{
+	width: 17%;
+	padding: 0 4% 0 0;
+	display: inline-block;
+}
 
 }
