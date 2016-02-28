@@ -2,9 +2,9 @@
 
 body{
 	font-family: 'Realtime-Regular', sans-serif;
-	overflow-x: hidden;
 	line-height: 16px;
 	font-size: 13px;
+	color: #1a1a1a;
 }
 
 .home{
@@ -31,24 +31,7 @@ body{
 a:active{ outline: none; }
 a:focus{ -moz-outline-style: none; outline-style: none; }
 
-p a:link, p a:visited{
-	border-bottom: 1px dotted #545454;
-	color: #545454;
-}
-
-ul a:link, ul a:visited{
-	color: #fff;
-	border-bottom: 1px dotted #fff;
-	padding-bottom: 2px;
-}
-
-h2 a:link, h2 a:visited{
-	color: #1a1a1a;
-	border-bottom: 1px solid #13A4F2;
-	padding-bottom: 2px;
-}
-
-a:link, a:visited, .row, .title, .number, .hack{
+a:link{
 	text-decoration: none;
 	-webkit-transition: all 0.25s ease;
 	-moz-transition: all 0.25s ease;
@@ -56,9 +39,16 @@ a:link, a:visited, .row, .title, .number, .hack{
 	transition: all 0.25s ease;
 }
 
-p a:hover, ul a:hover, h2 a:hover{
-	border-bottom: 1px dotted #aaaaaa;
-	color: #aaaaaa;
+a{
+	background-color: #fff;
+	padding: 7px 10px 10px 10px;
+	margin: 0px 1px 1px 0;
+	float: left;
+	color: #1a1a1a;
+}
+
+a:hover{
+	background-color: #FF002B;
 }
 
 /* -------------------- header -------------------- */
@@ -67,35 +57,8 @@ header{
 	position: fixed;
 }
 
-nav{
+nav, .name{
 	display: table-row;
-}
-
-nav a{
-	background-color: #fff;
-	padding: 7px 10px 10px 10px;
-	margin: 0px 1px 1px 0;
-	color: #1a1a1a;
-	float: left;
-}
-
-nav a:hover{
-	background-color: #FF002B;
-}
-
-.name{
-	display: table-row;
-}
-
-.name a{
-	background-color: #fff;
-	padding: 7px 10px 10px 10px;
-	margin: 0px 1px 0 0;
-	float: left;
-}
-
-.name a:hover{
-	background-color: #FF002B;
 }
 
 .name p{
@@ -105,6 +68,8 @@ nav a:hover{
 	color: #fff;
 	float: left;
 }
+
+/* -------------------- content -------------------- */
 
 .content{
 	height: 100vh;
@@ -128,60 +93,55 @@ nav a:hover{
 	width: 100vw;
 }
 
-
 /* -------------------- table -------------------- */
 
 .rows{
 	padding-top: 68px;
 }
 
+.row{
+    display: block;
+    float: none;
+}
+
+.number{
+	color: #1a1a1a;
+	width: 2.25%;
+}
+
 .title{
-	text-transform: capitalize;
+	padding: 0 0 2px 0px;
+	width: 29.75%;
+	margin-right: 4%;
 	text-rendering: optimizelegibility;
 	color: #1a1a1a;
 }
 
-.number{
-	color: #1a1a1a	;
-}
-
-.row{
-	padding: 7px 10px 10px 10px;
-    display: block;
-    background-color: #fff;
-    margin: 0px 0px 1px 0px;
-}
-
-.row:link, .row:visited{
-	color: #fff;
+.row:visited .title{
+	text-decoration: line-through;
 }
 
 /* -------------------- footer -------------------- */
 
 .about{
-	padding: 24px 0;
+	padding: 30px 0 36px 0;
 }
 
 .about p{
-	float: left;
-}
-
-.intro{
-	padding: 0px 4% 16px 4%;
-	float: left;
-}
-
-.intro p{
-	color: #282828;
 	padding-bottom: 8px;
 }
 
-.social{
-	padding: 0px 4% 24px 4%;
+.intro{
 	float: left;
+	line-height: 18px;
+	width: 32%;
+	padding: 0 4% 0 4%;
 }
 
-.social ul{
+.social{
+	float: left;
+	width: 17%;
+	padding: 0 4% 0 0;
 	list-style-type: none;
 }
 
@@ -193,55 +153,4 @@ nav a:hover{
 /* -------------------- media queries -------------------- */
 
 @media screen and (min-width: 500px) {
-
-/* -------------------- table -------------------- */
-
-.number{
-	padding-bottom: 0px;
-	width: 2.25%;
-	vertical-align: top;
-	display: inline-block;
-}
-
-.title{
-	padding: 0 0 2px 0px;
-	width: 29.75%;
-	margin-right: 4%;
-	display: inline-block;
-	vertical-align: top;
-}
-
-.row:hover{
-	color: #282828;
-	background-color: #FF002B;
-}
-
-.row:visited{
-	text-decoration: line-through;
-}
-
-
-/* -------------------- footer -------------------- */
-
-.about{
-	padding: 30px 0 36px 0;
-}
-
-.about section{
-	vertical-align: top;
-}
-
-.intro{
-	line-height: 18px;
-	width: 32%;
-	padding: 0 4% 0 4%;
-	display: inline-block;
-}
-
-.social{
-	width: 17%;
-	padding: 0 4% 0 0;
-	display: inline-block;
-}
-
 }
