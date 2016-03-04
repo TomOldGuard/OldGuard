@@ -12,6 +12,11 @@ body{
 	position: relative;
 }
 
+.purple{
+	background-color: purple;
+	position: relative;
+}
+
 /* -------------------- type -------------------- */
 
 @font-face {
