@@ -5,17 +5,11 @@ body{
 	line-height: 16px;
 	font-size: 13px;
 	color: #1a1a1a;
-}
-
-.pink{
-	background-color: #FF002B;
 	position: relative;
 }
 
-.purple{
-	background-color: purple;
-	position: relative;
-}
+.pink{ background-color: #FF002B; }
+.purple{ background-color: purple; }
 
 /* -------------------- type -------------------- */
 
@@ -53,7 +47,15 @@ a{
 }
 
 a:hover{
-	background-color: #FF002B;
+	background-color: rgba(255, 255, 255, 0);
+}
+
+.ghost{
+	background-color: #fff;
+	padding: 7px 10px 10px 10px;
+	margin: 0px 1px 1px 0;
+	float: left;
+	opacity: 0.4;
 }
 
 /* -------------------- header -------------------- */
@@ -98,7 +100,12 @@ nav, .name{
 	width: 100vw;
 }
 
-/* -------------------- table -------------------- */
+iframe{
+	height: 100vh;
+	width: 100vw;
+}
+
+/* -------------------- contents -------------------- */
 
 .rows{
 	padding-top: 68px;
@@ -126,27 +133,19 @@ nav, .name{
 	text-decoration: line-through;
 }
 
-/* -------------------- footer -------------------- */
-
 .about{
 	padding: 30px 0 36px 0;
 }
 
 .about p{
-	padding-bottom: 8px;
-}
-
-.intro{
-	float: left;
+	padding: 0 10px 0 10px;
 	line-height: 18px;
-	width: 32%;
-	padding: 0 4% 0 4%;
 }
 
 .social{
 	float: left;
-	width: 17%;
-	padding: 0 4% 0 0;
+	width: 92%;
+	padding: 30px 0 0 0;
 	list-style-type: none;
 }
 
