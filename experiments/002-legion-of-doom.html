@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>002 · Legion of Doom — Old Guard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="../assets/logo.png">
+<link rel="apple-touch-icon" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* ---- 002 — Legion of Doom: procedural villain roster ----------- */
+  .lod { width: 100%; max-width: 1080px; }
+
+  .lod-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .lod-btn {
+    border: 1px solid var(--fg);
+    color: var(--fg);
+    background: transparent;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 120ms, color 120ms;
+  }
+  .lod-btn:hover { background: var(--fg); color: var(--bg); }
+  .lod-icon { width: 12px; height: 12px; display: inline-block; flex-shrink: 0; }
+  @media (max-width: 600px) {
+    .lod-toolbar { width: 100%; }
+    .lod-btn { flex: 1; text-align: center; }
+  }
+
+  .lod-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: var(--rule);
+    border-left: var(--rule);
+  }
+  @media (max-width: 900px) { .lod-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .lod-grid { grid-template-columns: 1fr; } }
+
+  .lod-card {
+    border-right: var(--rule);
+    border-bottom: var(--rule);
+    padding: 18px;
+    display: flex; flex-direction: column; gap: 14px;
+    position: relative;
+    animation: lod-in 400ms ease both;
+  }
+  @keyframes lod-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .lod-card-id {
+    position: absolute; top: 10px; right: 12px;
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .lod-sigil {
+    font-family: var(--mono);
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    white-space: pre;
+    line-height: 1.15;
+    padding: 4px 0;
+  }
+  .lod-name {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+  .lod-real {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .lod-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    margin-top: auto;
+  }
+  .lod-stats b {
+    display: block;
+    color: var(--fg);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .lod-stats b.acc { color: var(--accent); }
+
+  .lod-status[data-status="ACTIVE"]     b { color: var(--accent); }
+  .lod-status[data-status="DORMANT"]    b { color: var(--muted); }
+  .lod-status[data-status="CLASSIFIED"] b { color: var(--fg); }
+
+  .lod-footer {
+    display: flex; justify-content: space-between;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding-top: 14px;
+  }
+  .lod-footer b { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="site-header" data-header></header>
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="../index.html">Index</a>
+  <span>/</span>
+  <span class="here">002 · Legion of Doom</span>
+</nav>
+
+<section class="exp-stage" data-screen-label="002 Legion of Doom">
+  <div class="lod">
+    <div class="lod-toolbar">
+      <button class="lod-btn" id="lod-shuffle">
+        <svg class="lod-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M1.5 4 L4.5 4 L11 12 L14.5 12"/>
+          <path d="M12.5 10 L14.5 12 L12.5 14"/>
+          <path d="M1.5 12 L4.5 12 L7 9"/>
+          <path d="M9 7 L11 4 L14.5 4"/>
+          <path d="M12.5 2 L14.5 4 L12.5 6"/>
+        </svg>
+        Shuffle
+      </button>
+      <button class="lod-btn" id="lod-draft">Draft new legion</button>
+    </div>
+
+    <div class="lod-grid" id="lod-grid" aria-live="polite"></div>
+
+    <div class="lod-footer">
+      <span>Seed · <b id="lod-seed">000000</b></span>
+      <span>Generation · <b id="lod-gen">001</b></span>
+    </div>
+  </div>
+</section>
+
+<section class="exp-notes">
+  <div class="exp-notes-head">
+    <span class="num">002</span>
+    <span class="title">Legion of Doom</span>
+  </div>
+  <div class="exp-notes-inner">
+    <h3>Notes</h3>
+    <div>
+      <p>A roster of twelve procedurally-generated antagonists. Each operative gets a code name, an identity, a hand-drawn monospace sigil, a four-digit threat index, and a status flag.</p>
+      <p>The whole legion is reproducible from its seed — same seed, same villains. Use Shuffle to reorder the current roster without redrafting.</p>
+    </div>
+  </div>
+</section>
+
+<nav class="exp-nav" data-exp-nav aria-label="Experiment navigation"></nav>
+
+<footer class="site-footer" data-footer></footer>
+
+<script src="../assets/experiments.js"></script>
+<script src="../assets/chrome.js"></script>
+<script>
+  OG.renderHeader({ homeHref: "../index.html" });
+  OG.renderFooter({ colophonHref: "../colophon.html" });
+  OG.renderExpNav("legion-of-doom");
+
+  // ---- Seedable PRNG ----------------------------------------------
+  function rng(seed) {
+    return function () {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // ---- Name pools --------------------------------------------------
+  const TITLES = ["DR.", "THE", "COMMANDER", "AGENT", "MR.", "MS.", "PROFESSOR",
+                  "BARON", "COUNT", "LADY", "COMRADE", "CAPTAIN", "ARCHON"];
+  const CORES  = ["PARADOX", "STATIC", "MERIDIAN", "VOID", "ECHO", "MIRROR",
+                  "OBELISK", "FRACTURE", "PILGRIM", "SHROUD", "VERTEX", "SIGIL",
+                  "CIPHER", "SPECTRE", "ENTROPY", "HORIZON", "WAKE", "REGRET",
+                  "MARGIN", "GLITCH", "PARALLEL", "NEEDLE"];
+  const FIRST  = ["Aleks", "Mira", "Cass", "Jude", "Otis", "Vera", "Ren",
+                  "Ines", "Bori", "Lior", "Yannis", "Sasha", "Talya", "Eun",
+                  "Roma", "Nadia", "Imre"];
+  const LAST   = ["Halmstad", "Eklund", "Kowalski", "Brennan", "Okafor",
+                  "Vassilakis", "Saito", "Marchetti", "Hartwell", "Devine",
+                  "Tanaka", "Lefèvre", "Calder", "Polanco", "Rasmussen"];
+  const STATUS = ["ACTIVE", "ACTIVE", "DORMANT", "CLASSIFIED"];
+  const SIGILS = ["/X\\", ">!<", "#@#", "[Ø]", "{∴}", "<·>", "/+\\",
+                  "+†+", "∇▲∇", "}≡{", "~ω~", "/§\\", "≈X≈", "[%]",
+                  "·M·", "▮▯▮"];
+
+  // ---- Builders ----------------------------------------------------
+  function buildName(r) {
+    const t = TITLES[Math.floor(r() * TITLES.length)];
+    const c = CORES[Math.floor(r() * CORES.length)];
+    return `${t} ${c}`;
+  }
+  function buildReal(r) {
+    return `${FIRST[Math.floor(r() * FIRST.length)]} ${LAST[Math.floor(r() * LAST.length)]}`;
+  }
+  function buildSigil(r) {
+    return SIGILS[Math.floor(r() * SIGILS.length)];
+  }
+  function buildOperative(r, idx) {
+    const threat = Math.floor(r() * 9000 + 1000);
+    const yr = 1968 + Math.floor(r() * 56);
+    const status = STATUS[Math.floor(r() * STATUS.length)];
+    return {
+      idx,
+      code:  buildName(r),
+      real:  buildReal(r),
+      sigil: buildSigil(r),
+      threat,
+      recruited: yr,
+      status
+    };
+  }
+
+  // ---- Render ------------------------------------------------------
+  let currentSeed = randomSeed();
+  let generation = 1;
+  let roster = [];
+
+  function randomSeed() { return Math.floor(Math.random() * 999999); }
+
+  function draft(seed) {
+    currentSeed = seed;
+    const r = rng(seed * 7919 + 31);
+    roster = Array.from({ length: 12 }, (_, i) => buildOperative(r, i));
+    render();
+  }
+
+  function render() {
+    const grid = document.getElementById("lod-grid");
+    grid.innerHTML = roster.map((o, i) => `
+      <article class="lod-card lod-status" data-status="${o.status}" style="animation-delay:${i * 30}ms">
+        <span class="lod-card-id">№ ${String(i + 1).padStart(2, "0")}</span>
+        <div class="lod-sigil">${o.sigil}</div>
+        <div>
+          <div class="lod-name">${o.code}</div>
+          <div class="lod-real">a.k.a. ${o.real}</div>
+        </div>
+        <div class="lod-stats">
+          <span>Threat<b class="acc">${o.threat}</b></span>
+          <span>Recruited<b>${o.recruited}</b></span>
+          <span>Status<b>${o.status}</b></span>
+          <span>Cell<b>${String.fromCharCode(65 + Math.floor(o.threat / 1500))}-${(o.threat % 9) + 1}</b></span>
+        </div>
+      </article>
+    `).join("");
+    document.getElementById("lod-seed").textContent = String(currentSeed).padStart(6, "0");
+    document.getElementById("lod-gen").textContent = String(generation).padStart(3, "0");
+  }
+
+  function shuffle() {
+    for (let i = roster.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [roster[i], roster[j]] = [roster[j], roster[i]];
+    }
+    render();
+  }
+
+  document.getElementById("lod-draft").addEventListener("click", () => {
+    generation++;
+    draft(randomSeed());
+  });
+  document.getElementById("lod-shuffle").addEventListener("click", shuffle);
+
+  draft(currentSeed);
+</script>
+
+</body>
+</html>

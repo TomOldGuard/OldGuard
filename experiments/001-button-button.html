@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>001 · Button button — Old Guard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="../assets/logo.png">
+<link rel="apple-touch-icon" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* ---- 001 staging ------------------------------------------------ */
+  .bb-stage { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .bb-counter { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .bb-counter b { color: var(--accent); font-weight: 500; }
+  .bb-btn {
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    color: var(--fg);
+    background: transparent;
+    border: 1px solid var(--fg);
+    padding: 22px 28px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 120ms, color 120ms;
+  }
+  .bb-btn:hover { background: var(--fg); color: var(--bg); }
+  .bb-btn:hover > .bb-btn { background: transparent; color: var(--accent); border-color: var(--accent); }
+  .bb-btn > .bb-btn { padding: 14px 18px; font-size: 12px; }
+  .bb-btn > .bb-btn > .bb-btn { padding: 10px 14px; font-size: 11px; border-color: var(--accent); color: var(--accent); }
+  .bb-btn > .bb-btn > .bb-btn > .bb-btn { padding: 8px 10px; font-size: 10px; }
+  .bb-btn > .bb-btn > .bb-btn > .bb-btn > .bb-btn { padding: 6px 8px; font-size: 9px; }
+
+  .bb-helper { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; max-width: 38ch; text-align: center; }
+</style>
+</head>
+<body>
+
+<header class="site-header" data-header></header>
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="../index.html">Index</a>
+  <span>/</span>
+  <span class="here">001 · Button button</span>
+</nav>
+
+<section class="exp-stage" data-screen-label="001 Button button">
+  <div class="bb-stage">
+    <div class="bb-counter">DEPTH · <b id="bb-depth">0</b> · CLICKS · <b id="bb-clicks">0</b></div>
+    <button class="bb-btn" id="bb-root">CLICK</button>
+    <p class="bb-helper">Clicking a button puts a button inside it. The button is still a button. The button button is also a button.</p>
+  </div>
+</section>
+
+<section class="exp-notes">
+  <div class="exp-notes-head">
+    <span class="num">001</span>
+    <span class="title">Button button</span>
+  </div>
+  <div class="exp-notes-inner">
+    <h3>Notes</h3>
+    <div>
+      <p>A small study in recursion and affordance. Every click nests a new <code>&lt;button&gt;</code> inside the last one — same shape, smaller scale, narrower padding — until the structure visibly strains.</p>
+    </div>
+  </div>
+</section>
+
+<nav class="exp-nav" data-exp-nav aria-label="Experiment navigation"></nav>
+
+<footer class="site-footer" data-footer></footer>
+
+<script src="../assets/experiments.js"></script>
+<script src="../assets/chrome.js"></script>
+<script>
+  OG.renderHeader({ homeHref: "../index.html" });
+  OG.renderFooter({ colophonHref: "../colophon.html" });
+  OG.renderExpNav("button-button");
+
+  // ---- 001 interaction --------------------------------------------
+  const root = document.getElementById("bb-root");
+  const depthEl = document.getElementById("bb-depth");
+  const clicksEl = document.getElementById("bb-clicks");
+  let clicks = 0;
+
+  function attach(btn) {
+    btn.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      clicks++;
+      const child = document.createElement("button");
+      child.className = "bb-btn";
+      child.textContent = "CLICK";
+      btn.appendChild(child);
+      attach(child);
+      updateDepth();
+      clicksEl.textContent = clicks;
+    }, { once: true });
+  }
+  function updateDepth() {
+    let d = 0, n = root;
+    while (n.querySelector(":scope > .bb-btn")) { d++; n = n.querySelector(":scope > .bb-btn"); }
+    depthEl.textContent = d;
+  }
+  attach(root);
+</script>
+
+</body>
+</html>

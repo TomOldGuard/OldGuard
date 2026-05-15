@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>Colophon — Old Guard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<meta name="description" content="Colophon for Old Guard — a digital sandbox of experiments at the intersection of AI and design.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .col {
+    padding: clamp(40px, 8vw, 96px) var(--pad-x);
+    border-bottom: var(--rule);
+    display: grid;
+    gap: 48px;
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  @media (max-width: 720px) {
+    .col { grid-template-columns: 1fr; gap: 24px; }
+  }
+
+  .col-head h1 {
+    margin: 0;
+    font-size: clamp(40px, 7vw, 88px);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+  }
+  .col-head .accent { color: var(--accent); }
+  .col-meta {
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: grid;
+    gap: 4px;
+  }
+  .col-meta b { color: var(--fg); font-weight: 500; }
+
+  .col-body {
+    display: grid;
+    gap: 28px;
+    max-width: 64ch;
+  }
+  .col-section h2 {
+    margin: 0 0 10px 0;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 500;
+  }
+  .col-section p {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .col-section p:last-child { margin-bottom: 0; }
+  .col-section a {
+    color: var(--accent);
+    border-bottom: 1px solid currentColor;
+  }
+  .col-section em { color: var(--fg); font-style: italic; }
+
+  .col-grid {
+    display: grid;
+    gap: 0;
+    border: var(--rule);
+  }
+  .col-grid-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 16px;
+    padding: 12px 16px;
+    border-bottom: var(--rule);
+    font-size: 12px;
+    align-items: baseline;
+  }
+  .col-grid-row:last-child { border-bottom: none; }
+  .col-grid-row .k {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 10px;
+  }
+  .col-grid-row .v { color: var(--fg); }
+  @media (max-width: 720px) {
+    .col-grid-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header" data-header></header>
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="index.html">Index</a>
+  <span>/</span>
+  <span class="here">Colophon</span>
+</nav>
+
+<section class="col" data-screen-label="Colophon">
+  <div class="col-body">
+
+    <div class="col-section">
+      <h2>About this site</h2>
+      <p>Old Guard is a digital sandbox — a public archive of experiments at the intersection of <em>AI</em> and <em>design</em>.</p>
+      <p>Each experiment is a contained study: a generative artefact, an interactive demo, a motion test, a small game or a piece of typographic mischief.</p>
+      <p>Some are useful. Some are not.</p>
+    </div>
+
+    <div class="col-section">
+      <h2>Authorship</h2>
+      <p>Made by Tom Johnson collaboratively with <a href="https://www.anthropic.com/claude" target="_blank" rel="noreferrer">Claude</a>.</p>
+      <p>The arrangement is straightforward: ideas, taste, and direction are mine; structure, code, and the heavy lifting are Claude's. The site is the result of that conversation.</p>
+    </div>
+
+    <div class="col-section">
+      <h2>Construction</h2>
+      <div class="col-grid">
+        <div class="col-grid-row"><span class="k">Hosting</span><span class="v">GitHub Pages, static</span></div>
+        <div class="col-grid-row"><span class="k">Stack</span><span class="v">HTML, CSS, JavaScript — no framework, no build step</span></div>
+        <div class="col-grid-row"><span class="k">Typeface</span><span class="v">JetBrains Mono, weights 300 – 600</span></div>
+        <div class="col-grid-row"><span class="k">Palette</span><span class="v">Black, white, and a single accent <span style="color:var(--accent)">#ED6E5D</span></span></div>
+        <div class="col-grid-row"><span class="k">Built with</span><span class="v">Tom Johnson + Claude</span></div>
+        <div class="col-grid-row"><span class="k">Source</span><span class="v">Single registry · adding an experiment is one entry + one HTML file</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="site-footer" data-footer></footer>
+
+<script src="assets/experiments.js"></script>
+<script src="assets/chrome.js"></script>
+<script>
+  OG.renderHeader();
+  OG.renderFooter();
+</script>
+
+</body>
+</html>

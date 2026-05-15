@@ -1,73 +1,69 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    
-		<title>Old Guard &#8211; Tom Johnson</title>
-    <meta name="apple-mobile-web-app-title" content="Old Guard">
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>Old Guard / PLaiGROUND — a digital sandbox</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<meta name="description" content="A digital sandbox at the intersection of AI and design. Experiments, demos, and studies.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
 
-    <meta name="description" content="Old Guard,the online home of Tom Johnson"/>
-    <meta name="keywords" content="The Web, Usability, Ecommerce, Design, Coding, Build, UX, UI, product, online Conversion" />
-    <meta name="author" content="Tom Johnson" />
-    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0">
-    <meta http-equiv="cleartype" content="on">
+<header class="site-header" data-header></header>
 
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <link rel="shortcut icon" sizes="196x196" href="icon-196x196.png">
-    <link rel="apple-touch-icon" href="touch-icon-iphone.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="touch-icon-ipad.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="touch-icon-iphone-retina.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad-retina.png">
+<section class="intro" data-screen-label="00 Index" style="font-size: 42px">
+  <h1>
+    PL<span class="accent">ai</span>GROUND<span class="lower">A digital sandbox.</span>
+  </h1>
+</section>
 
-    <link rel="stylesheet" href="css/freestylin.css" type="text/css" media="screen" />
+<nav class="toolbar" aria-label="Index">
+  <div class="toolbar-count" data-toolbar-count></div>
+</nav>
 
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-6087485-1']);
-      _gaq.push(['_trackPageview']);
+<main class="experiments" data-view="list" data-experiments></main>
 
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
+<footer class="site-footer" data-footer></footer>
 
-  </head>
-  <body class="pink">
+<script src="assets/experiments.js"></script>
+<script src="assets/thumbs.js"></script>
+<script src="assets/chrome.js"></script>
+<script>
+  // Render shared chrome
+  OG.renderHeader();
+  OG.renderFooter();
 
-    <header>
-      <nav>
-        <a href="index.html">Index</a>
-      </nav>
-    </header>
-    <div class="rows">
-        <a class="row" href="003.html">
-          <span class="number">003</span>
-          <span class="title">Three thing title</span>
-        </a>
-        <a class="row" href="002.html">
-          <span class="number">002</span>
-          <span class="title">Is it still there?</span>
-        </a>
-        <a class="row" href="001.html">
-          <span class="number">001</span>
-          <span class="title">Notice period</span>
-        </a>
-    </div>
-    <div class="about">
-        <p>Old Guard is the online home and archive of Tom Johnson.</p>
-        <ul class="social">
-          <li><a id="email" href="#">Email</a></li>
-          <li><a href="http://twitter.com/oldguard" title="Old Guard Twitter profile">Twitter</a></li>
-          <li><a href="http://instagram.com/oldguard" title="Old Guard Instagram profile">Instagram</a></li>
-        </ul>
-    </div>
+  // ---- EXPERIMENT CARDS -------------------------------------------
+  const mount = document.querySelector("[data-experiments]");
+  mount.innerHTML = EXPERIMENTS.map(e => `
+    <a class="card" href="${e.href}">
+      <div class="thumb stripes" data-thumb="${e.slug}">
+        <div class="thumb-canvas" data-thumb-mount="${e.slug}"></div>
+        <span class="thumb-arrow">↗</span>
+        <span class="thumb-label">${e.num}</span>
+      </div>
+      <div class="card-meta">
+        <span class="meta-num">${e.num}</span>
+        <span class="meta-title">${e.title}</span>
+        <span class="meta-arrow">→</span>
+      </div>
+    </a>
+  `).join('');
 
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js?ver=1.7.2'></script>
-    <script type="text/javascript" src="js/bits.js"></script>
+  document.querySelector("[data-toolbar-count]").textContent =
+    `${String(EXPERIMENTS.length).padStart(3,'0')} EXPERIMENTS`;
 
-  </body>
+  // Render thumbnail mini-previews
+  EXPERIMENTS.forEach(e => {
+    const m = document.querySelector(`[data-thumb-mount="${e.slug}"]`);
+    if (m && window.THUMBS && THUMBS[e.slug]) THUMBS[e.slug](m);
+  });
+</script>
+
+</body>
 </html>
-

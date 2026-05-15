@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>003 · Notice period — Old Guard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="../assets/logo.png">
+<link rel="apple-touch-icon" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  .np-wrap { width: 100%; max-width: 760px; display: grid; gap: 18px; }
+  .np-row {
+    display: grid; grid-template-columns: 1fr auto auto;
+    align-items: baseline; gap: 16px;
+    padding-bottom: 12px; border-bottom: var(--rule);
+  }
+  .np-label {
+    font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.12em;
+  }
+  .np-val {
+    font-size: clamp(48px, 9vw, 96px);
+    font-weight: 500; line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg);
+  }
+  .np-val.accent { color: var(--accent); }
+  .np-unit {
+    font-size: 14px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    align-self: end; padding-bottom: 12px;
+  }
+  .np-bar { height: 6px; background: var(--dim); border: 1px solid var(--line); position: relative; overflow: hidden; }
+  .np-bar-fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); transition: width 1s linear; }
+
+  .np-footnote {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px; font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-top: 12px;
+  }
+  .np-footnote b { color: var(--fg); font-weight: 500; }
+  .np-footnote .right { text-align: right; }
+  .np-controls { display:flex; gap: 6px; margin-top: 4px; }
+  .np-control {
+    padding: 6px 10px; border: var(--rule); font-size: 10px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
+    transition: color 120ms, border-color 120ms;
+  }
+  .np-control:hover, .np-control[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .np-footnote { grid-template-columns: 1fr; }
+    .np-footnote .right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header" data-header></header>
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="../index.html">Index</a>
+  <span>/</span>
+  <span class="here">003 · Notice period</span>
+</nav>
+
+<section class="exp-stage" data-screen-label="003 Notice period">
+  <div class="np-wrap" id="np">
+    <div class="np-row">
+      <span class="np-label">Days remaining</span>
+      <span class="np-val" id="np-d">000</span>
+      <span class="np-unit">d</span>
+    </div>
+    <div class="np-row">
+      <span class="np-label">Hours</span>
+      <span class="np-val" id="np-h">00</span>
+      <span class="np-unit">h</span>
+    </div>
+    <div class="np-row">
+      <span class="np-label">Minutes</span>
+      <span class="np-val" id="np-m">00</span>
+      <span class="np-unit">m</span>
+    </div>
+    <div class="np-row">
+      <span class="np-label">Seconds</span>
+      <span class="np-val accent" id="np-s">00</span>
+      <span class="np-unit">s</span>
+    </div>
+
+    <div class="np-bar" aria-hidden="true"><div class="np-bar-fill" id="np-bar"></div></div>
+
+    <div class="np-footnote">
+      <span><b>Notice given</b><br><span id="np-from">—</span></span>
+      <span>Period · <b id="np-len">—</b></span>
+      <span class="right"><b>Ends</b><br><span id="np-to">—</span></span>
+    </div>
+    <div class="np-controls" role="group" aria-label="Preset notice periods">
+      <button class="np-control" data-ms="300000" data-label="5 min" aria-pressed="true">5M</button>
+      <button class="np-control" data-ms="3600000" data-label="1 hour">1H</button>
+      <button class="np-control" data-ms="86400000" data-label="1 day">1D</button>
+      <button class="np-control" data-ms="604800000" data-label="1 week">1W</button>
+      <button class="np-control" data-ms="2592000000" data-label="30 days">30D</button>
+    </div>
+  </div>
+</section>
+
+<section class="exp-notes">
+  <div class="exp-notes-head">
+    <span class="num">003</span>
+    <span class="title">Notice period</span>
+  </div>
+  <div class="exp-notes-inner">
+    <h3>Notes</h3>
+    <div>
+      <p>A countdown that doesn't know what it's counting down to. The notice was given when the page loaded; the period is whatever you choose. It ticks regardless.</p>
+      <p>Numerals are tabular; the accent bar fills in real time.</p>
+    </div>
+  </div>
+</section>
+
+<nav class="exp-nav" data-exp-nav aria-label="Experiment navigation"></nav>
+
+<footer class="site-footer" data-footer></footer>
+
+<script src="../assets/experiments.js"></script>
+<script src="../assets/chrome.js"></script>
+<script>
+  OG.renderHeader({ homeHref: "../index.html" });
+  OG.renderFooter({ colophonHref: "../colophon.html" });
+  OG.renderExpNav("notice-period");
+
+  // ---- 003 countdown ---------------------------------------------
+  const dEl = document.getElementById("np-d");
+  const hEl = document.getElementById("np-h");
+  const mEl = document.getElementById("np-m");
+  const sEl = document.getElementById("np-s");
+  const bar = document.getElementById("np-bar");
+  const fromEl = document.getElementById("np-from");
+  const toEl = document.getElementById("np-to");
+  const lenEl = document.getElementById("np-len");
+  const fmt = d => d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
+  const fmtDateTime = d => d.toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }).toUpperCase();
+
+  let start = Date.now();
+  let end = start;
+
+  function setLength(ms, btn) {
+    start = Date.now();
+    end = start + ms;
+    const label = btn ? btn.dataset.label : "";
+    fromEl.textContent = fmtDateTime(new Date(start));
+    toEl.textContent = fmtDateTime(new Date(end));
+    lenEl.textContent = label;
+    document.querySelectorAll(".np-control").forEach(b =>
+      b.setAttribute("aria-pressed", String(b === btn)));
+  }
+
+  function tick() {
+    const now = Date.now();
+    const ms = Math.max(0, end - now);
+    const total = end - start;
+    const elapsed = total - ms;
+    const pct = total === 0 ? 0 : Math.min(100, (elapsed / total) * 100);
+    bar.style.width = pct.toFixed(3) + "%";
+
+    const d = Math.floor(ms / 86400000);
+    const h = Math.floor((ms % 86400000) / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    dEl.textContent = String(d).padStart(3, "0");
+    hEl.textContent = String(h).padStart(2, "0");
+    mEl.textContent = String(m).padStart(2, "0");
+    sEl.textContent = String(s).padStart(2, "0");
+  }
+
+  document.querySelectorAll(".np-control").forEach(b =>
+    b.addEventListener("click", () => setLength(+b.dataset.ms, b)));
+
+  // pick default = currently aria-pressed button (5m)
+  const defaultBtn = document.querySelector(".np-control[aria-pressed='true']");
+  setLength(+defaultBtn.dataset.ms, defaultBtn);
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body>
+</html>

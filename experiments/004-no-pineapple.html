@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>004 · No pineapple — Old Guard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="../assets/logo.png">
+<link rel="apple-touch-icon" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* ---- 004 — Procedural Pizza Generator -------------------------- */
+  .pp { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; max-width: 1080px; width: 100%; }
+  @media (max-width: 760px) { .pp { grid-template-columns: 1fr; gap: 32px; } }
+
+  .pp-pizza {
+    width: 100%; aspect-ratio: 1 / 1;
+    position: relative; max-width: 520px; margin: 0 auto;
+  }
+  .pp-pizza svg { width: 100%; height: 100%; display: block; }
+
+  .pp-pizza::before {
+    content: ""; position: absolute; inset: -1px;
+    border: 1px dashed var(--line); border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .pp-ticket {
+    border: var(--rule);
+    padding: 18px;
+    background: var(--bg);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .pp-ticket-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 12px; border-bottom: var(--rule);
+  }
+  .pp-ticket-head .lbl { color: var(--muted); }
+  .pp-ticket-head .serial { color: var(--accent); font-size: 13px; font-weight: 500; letter-spacing: 0.04em; }
+
+  .pp-row {
+    display: grid; grid-template-columns: 90px 1fr;
+    gap: 16px; align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .pp-row:last-of-type { border-bottom: none; }
+  .pp-row .k { color: var(--muted); }
+  .pp-row .v { color: var(--fg); font-weight: 500; }
+  .pp-row .v.acc { color: var(--accent); }
+
+  .pp-toppings { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+  .pp-toppings span {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--fg);
+  }
+  .pp-toppings .swatch {
+    width: 8px; height: 8px;
+    border: 1px solid var(--fg);
+    display: inline-block;
+  }
+  .pp-toppings .swatch.pep { background: var(--accent); border-color: var(--accent); border-radius: 50%; }
+  .pp-toppings .swatch.oli { background: transparent; border-color: var(--fg); border-radius: 50%; }
+  .pp-toppings .swatch.mush { background: var(--fg); border-radius: 50%; }
+  .pp-toppings .swatch.bas { background: transparent; border: none; clip-path: polygon(50% 0, 100% 100%, 0 100%); background-color: var(--fg); }
+  .pp-toppings .swatch.anc { background: var(--accent); }
+
+  .pp-order {
+    margin-top: 8px;
+    border: 1px solid var(--fg);
+    padding: 12px 14px;
+    font-family: var(--mono);
+    color: var(--fg);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: background 120ms, color 120ms;
+  }
+  .pp-order:hover { background: var(--fg); color: var(--bg); }
+  .pp-order .key {
+    border: 1px solid currentColor;
+    padding: 2px 6px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+  }
+
+  /* ---- Recall form ---------------------------------------------- */
+  .pp-recall {
+    display: flex; flex-direction: column; gap: 6px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+  }
+  .pp-recall-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .pp-recall-row {
+    display: flex; align-items: stretch;
+    border: var(--rule);
+  }
+  .pp-recall-hash {
+    padding: 8px 10px;
+    color: var(--muted);
+    font-size: 13px;
+    border-right: var(--rule);
+    display: flex; align-items: center;
+  }
+  .pp-recall-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 8px 10px;
+    letter-spacing: 0.08em;
+    outline: none;
+    width: 0;
+  }
+  .pp-recall-input::placeholder { color: var(--muted); }
+  .pp-recall-input:focus { color: var(--accent); }
+  .pp-recall-btn {
+    background: transparent;
+    border: none;
+    border-left: var(--rule);
+    color: var(--muted);
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 10px;
+    padding: 0 14px;
+    cursor: pointer;
+    transition: background 120ms, color 120ms;
+  }
+  .pp-recall-btn:hover { background: var(--accent); color: var(--bg); }
+
+  .pp-counter {
+    text-align: right;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .pp-counter b { color: var(--accent); font-weight: 500; }
+
+  .pp-fade { animation: pp-in 360ms ease both; }
+  @keyframes pp-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header" data-header></header>
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="../index.html">Index</a>
+  <span>/</span>
+  <span class="here">004 · No pineapple</span>
+</nav>
+
+<section class="exp-stage" data-screen-label="004 No pineapple">
+  <div class="pp">
+    <div class="pp-pizza" id="pp-pizza-mount"></div>
+    <div class="pp-ticket" id="pp-ticket">
+      <div class="pp-ticket-head">
+        <span class="lbl">Order ticket</span>
+        <span class="serial" id="pp-serial">#00000</span>
+      </div>
+      <div class="pp-row"><span class="k">Diameter</span><span class="v" id="pp-dia">— cm</span></div>
+      <div class="pp-row"><span class="k">Slices</span><span class="v acc" id="pp-slices">—</span></div>
+      <div class="pp-row"><span class="k">Crust</span><span class="v" id="pp-crust">—</span></div>
+      <div class="pp-row"><span class="k">Toppings</span><span class="v"><span class="pp-toppings" id="pp-toppings"></span></span></div>
+      <div class="pp-row"><span class="k">Bake</span><span class="v" id="pp-bake">— min @ —°C</span></div>
+
+      <button class="pp-order" id="pp-order">
+        <span>Generate next pizza</span>
+        <span class="key">→</span>
+      </button>
+      <form class="pp-recall" id="pp-recall" autocomplete="off">
+        <label class="pp-recall-label" for="pp-recall-input">Recall serial</label>
+        <div class="pp-recall-row">
+          <span class="pp-recall-hash">#</span>
+          <input class="pp-recall-input" id="pp-recall-input" type="text" inputmode="numeric" maxlength="5" placeholder="00000" aria-label="Serial number">
+          <button type="submit" class="pp-recall-btn" aria-label="Recall this pizza">Recall</button>
+        </div>
+      </form>
+      <div class="pp-counter">TOTAL DISPATCHED · <b id="pp-count">0001</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="exp-notes">
+  <div class="exp-notes-head">
+    <span class="num">004</span>
+    <span class="title">No pineapple</span>
+  </div>
+  <div class="exp-notes-inner">
+    <h3>Notes</h3>
+    <div>
+      <p>A procedural pizza generator. Every order produces a fresh pizza: random diameter, slice count, crust, topping distribution, bake time. The serial number is the seed; the same serial will always return the same pizza.</p>
+    </div>
+  </div>
+</section>
+
+<nav class="exp-nav" data-exp-nav aria-label="Experiment navigation"></nav>
+
+<footer class="site-footer" data-footer></footer>
+
+<script src="../assets/experiments.js"></script>
+<script src="../assets/chrome.js"></script>
+<script>
+  OG.renderHeader({ homeHref: "../index.html" });
+  OG.renderFooter({ colophonHref: "../colophon.html" });
+  OG.renderExpNav("no-pineapple");
+
+  // ---- Tiny seedable PRNG (mulberry32) ----------------------------
+  function rng(seed) {
+    return function () {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  const NS = "http://www.w3.org/2000/svg";
+  const CRUSTS = ["Thin Roman", "Hand-tossed", "Detroit deep", "Sourdough", "Stuffed", "Cracker"];
+  const TOPPING_DEFS = [
+    { key: "pep",  label: "Pepperoni"  },
+    { key: "oli",  label: "Olive"      },
+    { key: "mush", label: "Mushroom"   },
+    { key: "bas",  label: "Basil"      },
+    { key: "anc",  label: "Anchovy"    }
+  ];
+
+  let count = 1;
+
+  function generate(serial) {
+    const r = rng(serial * 9301 + 49297);
+    const sliceCount = [6, 8, 8, 10, 12][Math.floor(r() * 5)];
+    const diameter = [26, 30, 32, 38, 42][Math.floor(r() * 5)];
+    const crust = CRUSTS[Math.floor(r() * CRUSTS.length)];
+    const bake = 6 + Math.floor(r() * 8);
+    const temp = 220 + Math.floor(r() * 80);
+
+    const topCount = 1 + Math.floor(r() * 4);
+    const pool = [...TOPPING_DEFS].sort(() => r() - 0.5);
+    const toppings = pool.slice(0, topCount);
+
+    // ---- Draw the pizza ------------------------------------------
+    const mount = document.getElementById("pp-pizza-mount");
+    mount.classList.remove("pp-fade");
+    void mount.offsetWidth;
+    mount.classList.add("pp-fade");
+
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "-50 -50 100 100");
+
+    const crustC = document.createElementNS(NS, "circle");
+    crustC.setAttribute("r", "44"); crustC.setAttribute("fill", "var(--dim)");
+    crustC.setAttribute("stroke", "var(--fg)"); crustC.setAttribute("stroke-width", "0.7");
+    svg.appendChild(crustC);
+
+    const sauce = document.createElementNS(NS, "circle");
+    sauce.setAttribute("r", "39"); sauce.setAttribute("fill", "transparent");
+    sauce.setAttribute("stroke", "var(--fg)"); sauce.setAttribute("stroke-width", "0.3");
+    sauce.setAttribute("stroke-dasharray", "1 1.4");
+    svg.appendChild(sauce);
+
+    for (let i = 0; i < sliceCount; i++) {
+      const ang = (i / sliceCount) * Math.PI * 2;
+      const x = Math.cos(ang) * 39;
+      const y = Math.sin(ang) * 39;
+      const line = document.createElementNS(NS, "line");
+      line.setAttribute("x1", "0"); line.setAttribute("y1", "0");
+      line.setAttribute("x2", x.toFixed(2)); line.setAttribute("y2", y.toFixed(2));
+      line.setAttribute("stroke", "var(--fg)"); line.setAttribute("stroke-width", "0.4");
+      line.setAttribute("opacity", "0.55");
+      svg.appendChild(line);
+    }
+
+    const toppingsPerKind = 6 + Math.floor(r() * 8);
+    toppings.forEach(t => {
+      for (let i = 0; i < toppingsPerKind; i++) {
+        const ang = r() * Math.PI * 2;
+        const rad = Math.sqrt(r()) * 34;
+        const cx = (Math.cos(ang) * rad).toFixed(2);
+        const cy = (Math.sin(ang) * rad).toFixed(2);
+        if (t.key === "pep") {
+          const c = document.createElementNS(NS, "circle");
+          c.setAttribute("cx", cx); c.setAttribute("cy", cy);
+          c.setAttribute("r", (2 + r() * 0.8).toFixed(2));
+          c.setAttribute("fill", "var(--accent)");
+          c.setAttribute("stroke", "var(--bg)"); c.setAttribute("stroke-width", "0.3");
+          svg.appendChild(c);
+        } else if (t.key === "oli") {
+          const c = document.createElementNS(NS, "circle");
+          c.setAttribute("cx", cx); c.setAttribute("cy", cy);
+          c.setAttribute("r", "1.4");
+          c.setAttribute("fill", "transparent");
+          c.setAttribute("stroke", "var(--fg)"); c.setAttribute("stroke-width", "0.5");
+          svg.appendChild(c);
+        } else if (t.key === "mush") {
+          const c = document.createElementNS(NS, "circle");
+          c.setAttribute("cx", cx); c.setAttribute("cy", cy);
+          c.setAttribute("r", "1.6");
+          c.setAttribute("fill", "var(--fg)");
+          c.setAttribute("opacity", "0.65");
+          svg.appendChild(c);
+        } else if (t.key === "bas") {
+          const tri = document.createElementNS(NS, "path");
+          const s = 2;
+          tri.setAttribute("d", `M${cx} ${(cy - s)} L${(parseFloat(cx) + s).toFixed(2)} ${(parseFloat(cy) + s).toFixed(2)} L${(parseFloat(cx) - s).toFixed(2)} ${(parseFloat(cy) + s).toFixed(2)} Z`);
+          tri.setAttribute("fill", "var(--fg)");
+          tri.setAttribute("opacity", "0.5");
+          svg.appendChild(tri);
+        } else if (t.key === "anc") {
+          const ln = document.createElementNS(NS, "rect");
+          ln.setAttribute("x", (parseFloat(cx) - 1.6).toFixed(2));
+          ln.setAttribute("y", (parseFloat(cy) - 0.4).toFixed(2));
+          ln.setAttribute("width", "3.2"); ln.setAttribute("height", "0.8");
+          ln.setAttribute("fill", "var(--accent)");
+          ln.setAttribute("transform", `rotate(${(r() * 360).toFixed(0)} ${cx} ${cy})`);
+          svg.appendChild(ln);
+        }
+      }
+    });
+
+    mount.innerHTML = "";
+    mount.appendChild(svg);
+
+    document.getElementById("pp-serial").textContent = "#" + String(serial).padStart(5, "0");
+    document.getElementById("pp-dia").textContent = diameter + " cm";
+    document.getElementById("pp-slices").textContent = sliceCount + " slices";
+    document.getElementById("pp-crust").textContent = crust;
+    document.getElementById("pp-bake").textContent = bake + " min @ " + temp + "°C";
+    document.getElementById("pp-count").textContent = String(count).padStart(4, "0");
+
+    const topMount = document.getElementById("pp-toppings");
+    topMount.innerHTML = toppings.map(t =>
+      `<span><span class="swatch ${t.key}"></span>${t.label}</span>`
+    ).join("");
+  }
+
+  function nextSerial() {
+    return Math.floor(Math.random() * 99999) + 1;
+  }
+
+  document.getElementById("pp-order").addEventListener("click", () => {
+    count++;
+    generate(nextSerial());
+  });
+
+  const recallInput = document.getElementById("pp-recall-input");
+  const recallForm = document.getElementById("pp-recall");
+  recallForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const raw = recallInput.value.replace(/[^0-9]/g, "");
+    if (!raw) return;
+    const n = Math.max(1, Math.min(99999, parseInt(raw, 10)));
+    count++;
+    generate(n);
+    recallInput.value = "";
+    recallInput.blur();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && document.activeElement !== recallInput) {
+      count++;
+      generate(nextSerial());
+    }
+  });
+
+  generate(nextSerial());
+</script>
+
+</body>
+</html>
