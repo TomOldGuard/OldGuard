@@ -51,7 +51,7 @@
     color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
     transition: color 120ms, border-color 120ms;
   }
-  .np-control:hover, .np-control[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+  .np-control:hover, .np-control[aria-pressed="true"] { background: var(--dim); color: var(--accent); border-color: var(--accent); }
 
   @media (max-width: 640px) {
     .np-footnote { grid-template-columns: 1fr; }
@@ -181,7 +181,7 @@
   document.querySelectorAll(".np-control").forEach(b =>
     b.addEventListener("click", () => setLength(+b.dataset.ms, b)));
 
-  // pick default = currently aria-pressed button (5m)
+  // pick default = currently aria-pressed button (30d)
   const defaultBtn = document.querySelector(".np-control[aria-pressed='true']");
   setLength(+defaultBtn.dataset.ms, defaultBtn);
   tick();

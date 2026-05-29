@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
 <style>
-  /* ---- 005 — Superprecise: a precision-stop game ---------------- */
+  /* ---- 005 — Super precise: a precision-stop game ---------------- */
   .sp { width: 100%; max-width: 960px; display: grid; gap: 24px; }
 
   .sp-hud {
@@ -77,6 +77,7 @@
   }
   .sp-target-row.locked .live { color: var(--accent); }
 
+  /* ---- the scanner track --------------------------------------- */
   .sp-track-wrap {
     border: var(--rule);
     padding: 20px;
@@ -160,6 +161,7 @@
   }
   .sp-prompt b { color: var(--fg); font-weight: 500; }
 
+  /* ---- result panel -------------------------------------------- */
   .sp-result {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -221,7 +223,7 @@
     transition: background 120ms, color 120ms;
     display: inline-flex; align-items: center; gap: 8px;
   }
-  .sp-btn:hover { background: var(--fg); color: var(--bg); }
+  .sp-btn:hover { background: var(--dim); color: var(--accent); border-color: var(--accent); }
   .sp-btn.subtle {
     border-color: var(--line);
     color: var(--muted);
@@ -235,6 +237,7 @@
     font-weight: 500;
   }
 
+  /* ---- end-of-run summary -------------------------------------- */
   .sp-summary {
     border: var(--rule);
     padding: 24px;
@@ -379,7 +382,7 @@
       <span class="sp-grade" id="sp-status">Round 1 — sweep speed <b>SLOW</b></span>
       <div style="flex:1"></div>
       <button class="sp-btn subtle" id="sp-reset">Reset</button>
-      <button class="sp-btn" id="sp-next">Next round <span class="key">→</span></button>
+      <button class="sp-btn" id="sp-next">Next round</button>
     </div>
 
     <div class="sp-summary hidden" id="sp-summary">
@@ -402,7 +405,7 @@
         </div>
       </div>
       <div class="sp-summary-actions">
-        <button class="sp-btn" id="sp-again">Play again <span class="key">→</span></button>
+        <button class="sp-btn" id="sp-again">Play again</button>
         <a class="sp-btn subtle" href="../index.html">Back to index</a>
       </div>
     </div>
@@ -435,6 +438,7 @@
   OG.renderFooter({ colophonHref: "../colophon.html" });
   OG.renderExpNav("super-precise");
 
+  // ---- Refs --------------------------------------------------------
   const track       = document.getElementById("sp-track");
   const scanner     = document.getElementById("sp-scanner");
   const targetLine  = document.getElementById("sp-target-line");
@@ -461,6 +465,7 @@
   const sumAvgEl    = document.getElementById("sp-sum-avg");
   const sumBestRoundEl = document.getElementById("sp-sum-bestround");
 
+  // ---- Build the track axis ---------------------------------------
   const axis = document.getElementById("sp-axis");
   for (let i = 0; i <= 100; i++) {
     if (i % 5 !== 0) continue;
@@ -478,14 +483,15 @@
     }
   }
 
+  // ---- State -------------------------------------------------------
   const ROUNDS = 5;
-  const SPEEDS = [22, 32, 44, 60, 82];
+  const SPEEDS = [22, 32, 44, 60, 82]; // units per second
   const SPEED_NAMES = ["SLOW", "STEADY", "BRISK", "FAST", "BLINK"];
   let state;
 
   function newGame() {
     state = {
-      round: 0,
+      round: 0,           // 0-indexed
       score: 0,
       value: 0,
       direction: 1,
@@ -501,13 +507,12 @@
     document.querySelector(".sp-actions").style.display = "";
     targetRow.classList.remove("locked");
     scanner.classList.remove("locked");
-    nextBtn.querySelector(".key").style.display = "";
-    nextBtn.firstChild.textContent = "Next round ";
+    nextBtn.firstChild.textContent = "Next round";
     requestAnimationFrame(loop);
   }
 
   function rollTarget() {
-    return Math.round((20 + Math.random() * 60) * 100) / 100;
+    return Math.round((20 + Math.random() * 60) * 100) / 100; // 20.00–80.00
   }
 
   function updateHud() {
@@ -522,6 +527,7 @@
       : `Round ${state.round + 1} — sweep speed <b>${SPEED_NAMES[state.round]}</b>`;
   }
 
+  // ---- Animation loop ---------------------------------------------
   function loop(ts) {
     if (state.locked) return;
     if (state.lastTime == null) state.lastTime = ts;
@@ -539,6 +545,7 @@
     requestAnimationFrame(loop);
   }
 
+  // ---- Lock attempt ------------------------------------------------
   function lock() {
     if (state.locked || state.done) return;
     state.locked = true;
@@ -582,7 +589,9 @@
     }
   }
 
+  // ---- End-of-run summary -----------------------------------------
   function showSummary(beat, prevBest) {
+    // Hide live result + action bar, reveal summary
     resultEl.classList.add("hidden");
     document.querySelector(".sp-actions").style.display = "none";
 
@@ -597,6 +606,7 @@
     sumAvgEl.textContent = "± " + avgDelta.toFixed(2);
     sumBestRoundEl.textContent = `Rd ${bestRound.round} · +${bestRound.points}`;
 
+    // Per-round rows
     const head = summaryRowsEl.querySelector(".sp-summary-row.head");
     summaryRowsEl.innerHTML = "";
     summaryRowsEl.appendChild(head);
@@ -629,6 +639,7 @@
     requestAnimationFrame(loop);
   }
 
+  // ---- Wire --------------------------------------------------------
   function handleKey(e) {
     if (e.key === " " || e.code === "Space") {
       e.preventDefault();

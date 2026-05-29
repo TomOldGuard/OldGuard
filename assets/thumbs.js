@@ -100,5 +100,89 @@ window.THUMBS = {
         @keyframes thumb-spin { to { transform: rotate(360deg); } }
       </style>
     `;
+  },
+
+  /* 008 — Nakagin Capsule Tower: a small iso stack of capsules */
+  "nakagin-capsule-tower": (root) => {
+    const TW = 30, TH = 15, CH = 17;
+    const cap = (c, r) => {
+      const cx = (c - r) * TW / 2, cyf = (c + r) * TH / 2, cyt = cyf - CH;
+      const P = (x, y) => `${x.toFixed(1)},${y.toFixed(1)}`;
+      const top = [P(cx, cyt - TH/2), P(cx + TW/2, cyt), P(cx, cyt + TH/2), P(cx - TW/2, cyt)].join(" ");
+      const left = [P(cx - TW/2, cyf), P(cx, cyf + TH/2), P(cx, cyt + TH/2), P(cx - TW/2, cyt)].join(" ");
+      const right = [P(cx, cyf + TH/2), P(cx + TW/2, cyf), P(cx + TW/2, cyt), P(cx, cyt + TH/2)].join(" ");
+      const wx = cx + TW/4, wy = cyf - CH/2 + TH/4;
+      const R = 0.3, ma = (R*TW/2).toFixed(2), mb = (R*-TH/2).toFixed(2), md = (R*-CH).toFixed(2);
+      return `<polygon points="${left}" class="f s"/><polygon points="${right}" class="f s"/>`
+        + `<polygon points="${top}" class="t s"/>`
+        + `<g transform="matrix(${ma} ${mb} 0 ${md} ${wx.toFixed(1)} ${wy.toFixed(1)})">`
+        + `<circle r="1" class="w" vector-effect="non-scaling-stroke"/></g>`;
+    };
+    // back-to-front by depth (c+r): an L-shaped stack
+    const cells = [{c:0,r:1},{c:1,r:1},{c:1,r:0},{c:0,r:0}];
+    cells.sort((a,b)=>(a.c+a.r)-(b.c+b.r));
+    root.innerHTML = `
+      <div class="thumb-nk">
+        <svg viewBox="-34 -28 68 64" aria-hidden="true">${cells.map(c=>cap(c.c,c.r)).join("")}</svg>
+      </div>
+      <style>
+        .thumb-nk { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+        .thumb-nk svg { width:62%; height:62%; overflow:visible; }
+        .thumb-nk .s { stroke: var(--fg); stroke-width: 1.1; stroke-linejoin: round; }
+        .thumb-nk .f { fill: var(--bg); }
+        .thumb-nk .t { fill: var(--dim); }
+        .thumb-nk .w { fill: none; stroke: var(--accent); stroke-width: 1.1; }
+      </style>
+    `;
+  },
+
+  /* 009 — Particle Ocean: a small drifting plexus with one coral hub */
+  "particle-ocean": (root) => {
+    root.innerHTML = `
+      <div class="thumb-po"><svg viewBox="0 0 120 90" aria-hidden="true"></svg></div>
+      <style>
+        .thumb-po { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+        .thumb-po svg { width:100%; height:100%; }
+        .thumb-po .lnk { stroke: var(--fg); stroke-width: 0.5; }
+        .thumb-po .alnk { stroke: var(--accent); stroke-width: 0.6; }
+        .thumb-po .pt { fill: var(--fg); }
+        .thumb-po .hub { fill: var(--accent); }
+      </style>
+    `;
+    const svg = root.querySelector("svg");
+    const N = 13, LINK = 42, R = 2;
+    const pts = [];
+    for (let i = 0; i < N; i++) {
+      pts.push({ x: 8 + Math.random() * 104, y: 8 + Math.random() * 74, vx: (Math.random() - 0.5) * 0.18, vy: (Math.random() - 0.5) * 0.18 });
+    }
+    const hub = { x: 60, y: 45 };       // coral pointer node, drifts slowly
+    let ha = Math.random() * Math.PI * 2;
+    function tick() {
+      ha += 0.012;
+      hub.x = 60 + Math.cos(ha) * 30;
+      hub.y = 45 + Math.sin(ha * 1.3) * 22;
+      let s = "";
+      // neighbour links
+      for (let i = 0; i < N; i++) {
+        const a = pts[i];
+        a.x += a.vx; a.y += a.vy;
+        if (a.x < 6 || a.x > 114) a.vx *= -1;
+        if (a.y < 6 || a.y > 84) a.vy *= -1;
+        for (let j = i + 1; j < N; j++) {
+          const b = pts[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+          if (d < LINK) s += `<line class="lnk" x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke-opacity="${(1 - d / LINK) * 0.5}"/>`;
+        }
+      }
+      // hub coral links
+      for (const p of pts) {
+        const d = Math.hypot(p.x - hub.x, p.y - hub.y);
+        if (d < LINK * 1.4) s += `<line class="alnk" x1="${hub.x.toFixed(1)}" y1="${hub.y.toFixed(1)}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" stroke-opacity="${(1 - d / (LINK * 1.4)) * 0.7}"/>`;
+      }
+      for (const p of pts) s += `<circle class="pt" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${R}" fill-opacity="0.8"/>`;
+      s += `<circle class="hub" cx="${hub.x.toFixed(1)}" cy="${hub.y.toFixed(1)}" r="2.6"/>`;
+      svg.innerHTML = s;
+    }
+    tick();
+    setInterval(tick, 1000 / 24);
   }
 };

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <title>008 · Nakagin Capsule Tower — Old Guard</title>
@@ -83,11 +83,12 @@
     transition: background 120ms, color 120ms;
   }
   .nk-modes button:last-child { border-right: none; }
-  .nk-modes button:hover { color: var(--accent); }
+  .nk-modes button:hover { background: var(--dim); color: var(--accent); }
   .nk-modes button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
 
   .nk-rack {
     display: flex;
+    flex: 1;
     align-items: center;
     gap: 14px;
     padding: 16px;
@@ -143,7 +144,7 @@
   }
   .nk-stats .val.acc { color: var(--accent); }
 
-  .nk-actions { display: flex; margin-top: auto; }
+  .nk-actions { display: flex; }
   .nk-actions button {
     flex: 1;
     padding: 13px 8px;

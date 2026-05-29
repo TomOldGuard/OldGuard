@@ -127,7 +127,7 @@
     display: inline-flex; align-items: center; gap: 8px;
     transition: background 120ms, color 120ms, border-color 120ms;
   }
-  .me-btn:hover { background: var(--fg); color: var(--bg); }
+  .me-btn:hover { background: var(--dim); color: var(--accent); border-color: var(--accent); }
   .me-btn.subtle {
     border-color: var(--line);
     color: var(--muted);
@@ -137,6 +137,21 @@
   @media (max-width: 600px) {
     .me-actions { width: 100%; }
     .me-actions .me-btn { flex: 1; justify-content: center; }
+  }
+
+  .me-eye-mark {
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--fg);
+    margin: 0;
+  }
+  .me-eye-mark sup {
+    font-size: 0.5em;
+    color: var(--accent);
+    vertical-align: super;
+    font-weight: 500;
   }
 </style>
 </head>
@@ -205,11 +220,15 @@
   OG.renderFooter({ colophonHref: "../colophon.html" });
   OG.renderExpNav("magic-eye-squared");
 
+  // ============================================================
+  // Magic Eye² — autostereogram engine
+  // ============================================================
   const W = 720;
   const H = 480;
-  const TILE = 120;
-  const DEPTH_RANGE = 28;
+  const TILE = 120;        // base tile width — also the eye separation
+  const DEPTH_RANGE = 28;  // max pixel shift for nearest depth
 
+  // Pull brand colors from the live stylesheet
   const cs = getComputedStyle(document.documentElement);
   const ACCENT = cs.getPropertyValue("--accent").trim() || "#ED6E5D";
   const BG     = cs.getPropertyValue("--bg").trim()     || "#0a0a0a";
@@ -221,6 +240,8 @@
   const overlay = document.getElementById("me-overlay-canvas");
   const octx    = overlay.getContext("2d");
 
+  // Match fiducials to TILE separation so they help the viewer calibrate
+  // The stage rescales; compute pixel separation relative to displayed width
   function syncFiducials() {
     const stage = document.getElementById("me-stage");
     const w = stage.clientWidth;
@@ -229,12 +250,18 @@
   }
   window.addEventListener("resize", syncFiducials);
 
+  // ============================================================
+  // 1. Build the depth map — variants are all eye-themed
+  //    SINGLE | PAIR | TRIPLE | CYCLOPS | WINKED
+  // ============================================================
   function drawEye(cx, cy, eyeW, eyeH) {
+    // Outline halo (raised plane)
     octx.beginPath();
     octx.ellipse(cx, cy, eyeW / 2, eyeH / 2, 0, 0, Math.PI * 2);
     octx.fillStyle = "rgb(70,70,70)";
     octx.fill();
 
+    // Eyelid creases (pinch the shape into a true almond)
     octx.fillStyle = "#000";
     octx.beginPath();
     octx.moveTo(cx - eyeW / 2 - 14, cy - eyeH / 2 - 10);
@@ -251,12 +278,14 @@
     octx.closePath();
     octx.fill();
 
+    // Iris — circular plateau
     const irisR = Math.min(eyeW, eyeH) * 0.38;
     octx.beginPath();
     octx.arc(cx, cy, irisR, 0, Math.PI * 2);
     octx.fillStyle = "rgb(170,170,170)";
     octx.fill();
 
+    // Pupil — the highest point
     octx.beginPath();
     octx.arc(cx, cy, irisR * 0.42, 0, Math.PI * 2);
     octx.fillStyle = "rgb(255,255,255)";
@@ -264,6 +293,7 @@
   }
 
   function drawClosedEye(cx, cy, eyeW) {
+    // A subtle lid line — minimal depth
     octx.fillStyle = "rgb(70,70,70)";
     octx.beginPath();
     octx.ellipse(cx, cy, eyeW / 2, 10, 0, 0, Math.PI * 2);
@@ -273,17 +303,22 @@
   }
 
   const FORMS = [
+    // 0 — single centered eye
     () => drawEye(W / 2, H / 2, 360, 180),
+    // 1 — pair side by side
     () => {
       drawEye(W / 2 - 180, H / 2, 240, 140);
       drawEye(W / 2 + 180, H / 2, 240, 140);
     },
+    // 2 — triple cluster
     () => {
       drawEye(W / 2 - 200, H / 2 - 100, 180, 110);
       drawEye(W / 2 + 200, H / 2 - 100, 180, 110);
       drawEye(W / 2, H / 2 + 100, 220, 130);
     },
+    // 3 — one giant cyclops eye
     () => drawEye(W / 2, H / 2, 520, 280),
+    // 4 — open + closed wink
     () => {
       drawEye(W / 2 - 170, H / 2, 240, 140);
       drawClosedEye(W / 2 + 170, H / 2, 240);
@@ -293,14 +328,21 @@
   function buildDepthMap(formIndex) {
     octx.fillStyle = "#000";
     octx.fillRect(0, 0, W, H);
+
     const form = FORMS[formIndex % FORMS.length];
     form();
+
+    // Soften with a gentle blur for smoother depth gradients
     octx.filter = "blur(8px)";
     octx.drawImage(overlay, 0, 0);
     octx.filter = "none";
+
     return octx.getImageData(0, 0, W, H);
   }
 
+  // ============================================================
+  // 2. Generate a brand-coloured tile (pattern) — seedable RNG
+  // ============================================================
   function rngMul(seed) {
     return function () {
       seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
@@ -332,6 +374,7 @@
     }
     tctx.globalAlpha = 1;
 
+    // Add a few small accent rectangles for visual variety
     for (let i = 0; i < 24; i++) {
       const x = r() * TILE;
       const y = r() * H;
@@ -343,11 +386,15 @@
     return tile;
   }
 
+  // ============================================================
+  // 3. Render the stereogram by depth-shifting the tile
+  // ============================================================
   function renderStereogram(seed, formIndex) {
     const depth = buildDepthMap(formIndex);
     const depthData = depth.data;
     const tile = buildTile(seed);
 
+    // Lay the seed tile across the whole image first
     ctx.fillStyle = BG;
     ctx.fillRect(0, 0, W, H);
     for (let x = 0; x < W; x += TILE) {
@@ -356,10 +403,12 @@
     const img = ctx.getImageData(0, 0, W, H);
     const data = img.data;
 
+    // For each row, walk left → right, copying from (x - shift, y) where
+    // shift is shorter for nearer pixels — creating the parallax.
     for (let y = 0; y < H; y++) {
       for (let x = TILE; x < W; x++) {
         const dIdx = (y * W + x) * 4;
-        const d = depthData[dIdx] / 255;
+        const d = depthData[dIdx] / 255;          // 0..1
         const shift = TILE - Math.round(d * DEPTH_RANGE);
         const srcX = x - shift;
         if (srcX < 0) continue;
@@ -374,12 +423,16 @@
     syncFiducials();
   }
 
+  // ============================================================
+  // 4. Wire controls
+  // ============================================================
   function newSeed() { return Math.floor(Math.random() * 999999); }
   let currentSeed = newSeed();
   let currentForm = 0;
 
   function regenerate() {
     currentSeed = newSeed();
+    // Pick a different form to keep regenerations varied
     let nextForm = currentForm;
     while (nextForm === currentForm) {
       nextForm = Math.floor(Math.random() * FORMS.length);
@@ -408,7 +461,9 @@
     if (e.key.toLowerCase() === "r") setReveal(false);
   });
 
+  // ---- Initial render --------------------------------------------
   document.getElementById("me-seed").textContent = String(currentSeed).padStart(6, "0");
+  // Random starting form so each visit gives a different eye
   currentForm = Math.floor(Math.random() * FORMS.length);
   renderStereogram(currentSeed, currentForm);
   syncFiducials();

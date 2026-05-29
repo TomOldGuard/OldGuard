@@ -83,7 +83,7 @@
     display: flex; justify-content: space-between; align-items: center;
     transition: background 120ms, color 120ms;
   }
-  .pp-order:hover { background: var(--fg); color: var(--bg); }
+  .pp-order:hover { background: var(--dim); color: var(--accent); border-color: var(--accent); }
   .pp-order .key {
     border: 1px solid currentColor;
     padding: 2px 6px;
@@ -125,7 +125,7 @@
     padding: 8px 10px;
     letter-spacing: 0.08em;
     outline: none;
-    width: 0;
+    width: 0; /* allow flex shrink */
   }
   .pp-recall-input::placeholder { color: var(--muted); }
   .pp-recall-input:focus { color: var(--accent); }
@@ -142,7 +142,7 @@
     cursor: pointer;
     transition: background 120ms, color 120ms;
   }
-  .pp-recall-btn:hover { background: var(--accent); color: var(--bg); }
+  .pp-recall-btn:hover { background: var(--dim); color: var(--accent); }
 
   .pp-counter {
     text-align: right;
@@ -238,11 +238,11 @@
   const NS = "http://www.w3.org/2000/svg";
   const CRUSTS = ["Thin Roman", "Hand-tossed", "Detroit deep", "Sourdough", "Stuffed", "Cracker"];
   const TOPPING_DEFS = [
-    { key: "pep",  label: "Pepperoni"  },
-    { key: "oli",  label: "Olive"      },
-    { key: "mush", label: "Mushroom"   },
-    { key: "bas",  label: "Basil"      },
-    { key: "anc",  label: "Anchovy"    }
+    { key: "pep",  label: "Pepperoni"      },
+    { key: "oli",  label: "Olive"          },
+    { key: "mush", label: "Mushroom"       },
+    { key: "bas",  label: "Basil"          },
+    { key: "anc",  label: "Anchovy"        }
   ];
 
   let count = 1;
@@ -255,6 +255,7 @@
     const bake = 6 + Math.floor(r() * 8);
     const temp = 220 + Math.floor(r() * 80);
 
+    // 1–4 toppings
     const topCount = 1 + Math.floor(r() * 4);
     const pool = [...TOPPING_DEFS].sort(() => r() - 0.5);
     const toppings = pool.slice(0, topCount);
@@ -268,17 +269,20 @@
     const svg = document.createElementNS(NS, "svg");
     svg.setAttribute("viewBox", "-50 -50 100 100");
 
+    // crust ring
     const crustC = document.createElementNS(NS, "circle");
     crustC.setAttribute("r", "44"); crustC.setAttribute("fill", "var(--dim)");
     crustC.setAttribute("stroke", "var(--fg)"); crustC.setAttribute("stroke-width", "0.7");
     svg.appendChild(crustC);
 
+    // sauce / cheese
     const sauce = document.createElementNS(NS, "circle");
     sauce.setAttribute("r", "39"); sauce.setAttribute("fill", "transparent");
     sauce.setAttribute("stroke", "var(--fg)"); sauce.setAttribute("stroke-width", "0.3");
     sauce.setAttribute("stroke-dasharray", "1 1.4");
     svg.appendChild(sauce);
 
+    // slice cuts
     for (let i = 0; i < sliceCount; i++) {
       const ang = (i / sliceCount) * Math.PI * 2;
       const x = Math.cos(ang) * 39;
@@ -291,6 +295,7 @@
       svg.appendChild(line);
     }
 
+    // toppings, scattered procedurally
     const toppingsPerKind = 6 + Math.floor(r() * 8);
     toppings.forEach(t => {
       for (let i = 0; i < toppingsPerKind; i++) {
@@ -341,6 +346,7 @@
     mount.innerHTML = "";
     mount.appendChild(svg);
 
+    // ---- Update ticket -------------------------------------------
     document.getElementById("pp-serial").textContent = "#" + String(serial).padStart(5, "0");
     document.getElementById("pp-dia").textContent = diameter + " cm";
     document.getElementById("pp-slices").textContent = sliceCount + " slices";
@@ -363,6 +369,7 @@
     generate(nextSerial());
   });
 
+  // ---- Recall a specific serial -----------------------------------
   const recallInput = document.getElementById("pp-recall-input");
   const recallForm = document.getElementById("pp-recall");
   recallForm.addEventListener("submit", (e) => {
@@ -377,12 +384,14 @@
   });
 
   document.addEventListener("keydown", (e) => {
+    // ignore Enter while typing in the recall input — the form handler covers it
     if (e.key === "Enter" && document.activeElement !== recallInput) {
       count++;
       generate(nextSerial());
     }
   });
 
+  // initial pizza
   generate(nextSerial());
 </script>
 

@@ -9,7 +9,7 @@
   if (stored) root.setAttribute("data-theme", stored);
 
   function toggleTheme() {
-    const cur = root.getAttribute("data-theme") === "light" ? "light" : "dark";
+    const cur = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
     const next = cur === "light" ? "dark" : "light";
     root.setAttribute("data-theme", next);
     localStorage.setItem("og-theme", next);
@@ -66,14 +66,26 @@
 
     mount.innerHTML = `
       <a class="prev ${prev ? '' : 'disabled'}" href="${prev ? '../' + prev.href : '#'}">
-        <span class="nav-dir">← Previous · ${prev ? prev.num : '—'}</span>
+        <span class="nav-dir">&lt; Previous · ${prev ? prev.num : '—'}</span>
         <span class="nav-title">${prev ? prev.title : 'Start of index'}</span>
       </a>
       <a class="next ${next ? '' : 'disabled'}" href="${next ? '../' + next.href : '#'}">
-        <span class="nav-dir">Next · ${next ? next.num : '—'} →</span>
+        <span class="nav-dir">Next · ${next ? next.num : '—'} &gt;</span>
         <span class="nav-title">${next ? next.title : 'End of index'}</span>
       </a>
     `;
+
+    // Mirror the prev/next into compact arrows at the right of the breadcrumb bar
+    const crumbs = document.querySelector(".crumbs");
+    if (crumbs && !crumbs.querySelector(".crumb-nav")) {
+      const nav = document.createElement("span");
+      nav.className = "crumb-nav";
+      nav.innerHTML = `
+        <a class="${prev ? '' : 'disabled'}" href="${prev ? '../' + prev.href : '#'}" aria-label="${prev ? 'Previous · ' + prev.title : 'No previous experiment'}" title="${prev ? 'Previous · ' + prev.num + ' ' + prev.title : ''}">&lt;</a>
+        <a class="${next ? '' : 'disabled'}" href="${next ? '../' + next.href : '#'}" aria-label="${next ? 'Next · ' + next.title : 'No next experiment'}" title="${next ? 'Next · ' + next.num + ' ' + next.title : ''}">&gt;</a>
+      `;
+      crumbs.appendChild(nav);
+    }
   }
 
   window.OG = { renderHeader, renderFooter, renderExpNav };

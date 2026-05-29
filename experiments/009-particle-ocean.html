@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>009 · Particle Ocean — Old Guard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="../assets/logo.png">
+<link rel="apple-touch-icon" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* ---- 009 — Particle Ocean: drifting plexus, disturbed by the pointer ---- */
+  .po {
+    width: 100%;
+    max-width: 1080px;
+    border: var(--rule);
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .po-canvas-wrap {
+    position: relative;
+    width: 100%;
+    height: clamp(380px, 56vh, 620px);
+    overflow: hidden;
+    border-bottom: var(--rule);
+  }
+  .po-canvas-wrap canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  /* corner hint, fades after first interaction */
+  .po-hint {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    pointer-events: none;
+    transition: opacity 600ms;
+  }
+  .po-hint b { color: var(--fg); font-weight: 500; }
+  .po-hint .acc { color: var(--accent); }
+  .po-canvas-wrap.touched .po-hint { opacity: 0; }
+
+  /* control strip */
+  .po-bar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: stretch;
+  }
+  @media (max-width: 640px) {
+    .po-bar { grid-template-columns: 1fr; }
+  }
+
+  .po-modes { display: flex; border-right: var(--rule); }
+  @media (max-width: 640px) {
+    .po-modes { border-right: none; border-bottom: var(--rule); }
+  }
+  .po-modes button {
+    padding: 13px 16px;
+    border-right: var(--rule);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 120ms, color 120ms;
+  }
+  .po-modes button:last-child { border-right: none; }
+  .po-modes button:hover { background: var(--dim); color: var(--accent); }
+  .po-modes button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+
+  .po-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding: 0 18px;
+  }
+  @media (max-width: 640px) {
+    .po-stats { border-bottom: var(--rule); padding: 12px 18px; justify-content: flex-start; }
+  }
+  .po-stats .cell {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .po-stats .lbl {
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .po-stats .val {
+    font-size: 18px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    min-width: 3ch;
+    text-align: right;
+  }
+  .po-stats .val.acc { color: var(--accent); }
+
+  .po-actions { display: flex; border-left: var(--rule); }
+  @media (max-width: 640px) {
+    .po-actions { border-left: none; }
+  }
+  .po-actions button {
+    padding: 13px 16px;
+    border-left: var(--rule);
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 120ms, color 120ms;
+  }
+  .po-actions button:first-child { border-left: none; }
+  .po-actions button:hover { background: var(--dim); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="site-header" data-header></header>
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="../index.html">Index</a>
+  <span>/</span>
+  <span class="here">009 · Particle Ocean</span>
+</nav>
+
+<section class="exp-stage" data-screen-label="009 Particle Ocean">
+  <div class="po" id="po">
+    <div class="po-canvas-wrap" id="po-wrap">
+      <canvas id="po-canvas"></canvas>
+      <div class="po-hint"><b>Move</b> or <b>touch</b> the field — <span class="acc">draw new links</span>, break the old.</div>
+    </div>
+
+    <div class="po-bar">
+      <div class="po-modes" id="po-modes">
+        <button data-mode="repel" aria-pressed="true">Repel</button>
+        <button data-mode="attract" aria-pressed="false">Attract</button>
+        <button data-mode="swirl" aria-pressed="false">Swirl</button>
+      </div>
+
+      <div class="po-stats">
+        <div class="cell"><span class="lbl">Points</span><span class="val" id="po-points">0</span></div>
+        <div class="cell"><span class="lbl">Links</span><span class="val acc" id="po-links">0</span></div>
+      </div>
+
+      <div class="po-actions">
+        <button id="po-calm">Calm</button>
+        <button id="po-reseed">Reseed</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="exp-notes">
+  <div class="exp-notes-head">
+    <span class="num">009</span>
+    <span class="title">Particle Ocean</span>
+  </div>
+  <div class="exp-notes-inner">
+    <h3>Notes</h3>
+    <div>
+      <p>A field of points adrift on a slow current. Each one watches its neighbours: when two stray close enough, a hairline link is drawn between them; drift apart and it snaps. With no one watching, the field settles into a quietly shifting mesh — a plexus that is never quite the same twice.</p>
+      <p>Your cursor is a stone in the water. Move it through the field and the points nearby scatter (or gather, or spin), tearing the established web apart while the pointer itself reaches out in coral to whatever it can still touch. Press to throw a harder pulse. Switch the disturbance between <b>Repel</b>, <b>Attract</b> and <b>Swirl</b>; <b>Calm</b> stills the current, <b>Reseed</b> starts a fresh ocean.</p>
+    </div>
+  </div>
+</section>
+
+<nav class="exp-nav" data-exp-nav aria-label="Experiment navigation"></nav>
+
+<footer class="site-footer" data-footer></footer>
+
+<script src="../assets/experiments.js"></script>
+<script src="../assets/chrome.js"></script>
+<script>
+  OG.renderHeader({ homeHref: "../index.html" });
+  OG.renderFooter({ colophonHref: "../colophon.html" });
+  OG.renderExpNav("particle-ocean");
+
+  // ============================================================
+  // Setup
+  // ============================================================
+  const wrap = document.getElementById("po-wrap");
+  const canvas = document.getElementById("po-canvas");
+  const ctx = canvas.getContext("2d");
+
+  let W = 0, H = 0, DPR = 1;
+  let particles = [];
+  let mode = "repel";
+  let calm = false;
+
+  // pointer state, in CSS px
+  const ptr = { x: -9999, y: -9999, active: false, down: false, pulse: 0 };
+
+  // tunables (CSS px)
+  const LINK_DIST = 124;     // neighbour connection threshold
+  const PTR_RADIUS = 150;    // force influence radius
+  const PTR_LINK = 184;      // pointer reaches links to points within this
+  const MAX_SPEED = 0.55;    // gentle current cap
+
+  // ---- theme-aware colours -----------------------------------
+  let COL = { fg: [250, 250, 250], accent: [237, 110, 93] };
+  function hexToRgb(h) {
+    h = h.trim().replace("#", "");
+    if (h.length === 3) h = h.split("").map(c => c + c).join("");
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  }
+  function readColours() {
+    const cs = getComputedStyle(document.documentElement);
+    try { COL.fg = hexToRgb(cs.getPropertyValue("--fg")); } catch (e) {}
+    try { COL.accent = hexToRgb(cs.getPropertyValue("--accent")); } catch (e) {}
+  }
+  readColours();
+  new MutationObserver(readColours).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  // ============================================================
+  // Sizing + seeding
+  // ============================================================
+  function targetCount() {
+    const area = W * H;
+    return Math.max(54, Math.min(150, Math.round(area / 8200)));
+  }
+
+  function seed(n) {
+    particles = [];
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const s = 0.12 + Math.random() * 0.28;
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: Math.cos(a) * s,
+        vy: Math.sin(a) * s,
+        r: 1.1 + Math.random() * 1.7,
+        ph: Math.random() * Math.PI * 2   // flow phase offset
+      });
+    }
+  }
+
+  function resize() {
+    const rect = wrap.getBoundingClientRect();
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = rect.width; H = rect.height;
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    // keep population in proportion; reseed only if empty or wildly off
+    const want = targetCount();
+    if (!particles.length) seed(want);
+    else if (Math.abs(particles.length - want) > want * 0.5) {
+      // gently add/trim rather than full reseed to avoid jolts
+      while (particles.length < want) {
+        const a = Math.random() * Math.PI * 2, s = 0.12 + Math.random() * 0.28;
+        particles.push({ x: Math.random() * W, y: Math.random() * H, vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: 1.1 + Math.random() * 1.7, ph: Math.random() * Math.PI * 2 });
+      }
+      if (particles.length > want) particles.length = want;
+    }
+    // clamp any out-of-bounds points after a shrink
+    for (const p of particles) { p.x = Math.min(p.x, W); p.y = Math.min(p.y, H); }
+  }
+
+  // ============================================================
+  // Simulation
+  // ============================================================
+  let t = 0;
+  function step() {
+    t += 1;
+    const flowT = t * 0.0016;
+    const drag = calm ? 0.86 : 0.992;
+
+    for (const p of particles) {
+      if (!calm) {
+        // slow curl-ish current so the field breathes like water
+        const fx = Math.cos(p.y * 0.0065 + flowT + p.ph) * 0.013;
+        const fy = Math.sin(p.x * 0.0065 + flowT * 1.2) * 0.013;
+        p.vx += fx;
+        p.vy += fy;
+      }
+
+      // pointer force
+      if (ptr.active) {
+        const dx = p.x - ptr.x, dy = p.y - ptr.y;
+        const d = Math.hypot(dx, dy);
+        if (d < PTR_RADIUS && d > 0.001) {
+          const fall = (1 - d / PTR_RADIUS);
+          const base = (0.42 + ptr.pulse) * fall;
+          const nx = dx / d, ny = dy / d;
+          if (mode === "repel") {
+            p.vx += nx * base; p.vy += ny * base;
+          } else if (mode === "attract") {
+            p.vx -= nx * base * 0.8; p.vy -= ny * base * 0.8;
+          } else { // swirl — tangential
+            p.vx += -ny * base * 1.05; p.vy += nx * base * 1.05;
+          }
+        }
+      }
+
+      p.vx *= drag; p.vy *= drag;
+
+      // speed cap (a touch higher while a pulse is live)
+      const cap = MAX_SPEED + ptr.pulse * 2.4;
+      const sp = Math.hypot(p.vx, p.vy);
+      if (sp > cap) { p.vx = p.vx / sp * cap; p.vy = p.vy / sp * cap; }
+
+      p.x += p.vx; p.y += p.vy;
+
+      // soft bounce off edges keeps density even
+      if (p.x < 0) { p.x = 0; p.vx = Math.abs(p.vx); }
+      else if (p.x > W) { p.x = W; p.vx = -Math.abs(p.vx); }
+      if (p.y < 0) { p.y = 0; p.vy = Math.abs(p.vy); }
+      else if (p.y > H) { p.y = H; p.vy = -Math.abs(p.vy); }
+    }
+
+    ptr.pulse *= 0.9;
+    if (ptr.pulse < 0.001) ptr.pulse = 0;
+  }
+
+  // ============================================================
+  // Render
+  // ============================================================
+  let linkCount = 0;
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const [fr, fg, fb] = COL.fg;
+    const [ar, ag, ab] = COL.accent;
+    const L2 = LINK_DIST * LINK_DIST;
+    let links = 0;
+
+    // 1. neighbour links — hairline, alpha by proximity
+    ctx.lineWidth = 1;
+    for (let i = 0; i < particles.length; i++) {
+      const a = particles[i];
+      for (let j = i + 1; j < particles.length; j++) {
+        const b = particles[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 > L2) continue;
+        const d = Math.sqrt(d2);
+        let alpha = (1 - d / LINK_DIST) * 0.46;
+        // links disturbed by the pointer dim / break
+        if (ptr.active) {
+          const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+          const pd = Math.hypot(mx - ptr.x, my - ptr.y);
+          if (pd < PTR_RADIUS) alpha *= 0.10 + 0.9 * (pd / PTR_RADIUS);
+        }
+        if (alpha < 0.012) continue;
+        ctx.strokeStyle = `rgba(${fr},${fg},${fb},${alpha.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        links++;
+      }
+    }
+
+    // 2. pointer's own links — coral, the "new" connections
+    if (ptr.active) {
+      const PR2 = PTR_LINK * PTR_LINK;
+      for (const p of particles) {
+        const dx = p.x - ptr.x, dy = p.y - ptr.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 > PR2) continue;
+        const d = Math.sqrt(d2);
+        const alpha = (1 - d / PTR_LINK) * 0.72;
+        ctx.strokeStyle = `rgba(${ar},${ag},${ab},${alpha.toFixed(3)})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(ptr.x, ptr.y);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      }
+    }
+
+    // 3. points
+    for (const p of particles) {
+      let near = 0;
+      if (ptr.active) {
+        const pd = Math.hypot(p.x - ptr.x, p.y - ptr.y);
+        if (pd < PTR_LINK) near = 1 - pd / PTR_LINK;
+      }
+      const rr = p.r + near * 1.4;
+      if (near > 0.04) {
+        ctx.fillStyle = `rgba(${ar},${ag},${ab},${(0.55 + near * 0.45).toFixed(3)})`;
+      } else {
+        ctx.fillStyle = `rgba(${fr},${fg},${fb},0.82)`;
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, rr, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 4. pointer node
+    if (ptr.active) {
+      ctx.fillStyle = `rgba(${ar},${ag},${ab},0.95)`;
+      ctx.beginPath();
+      ctx.arc(ptr.x, ptr.y, 3 + ptr.pulse * 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    linkCount = links;
+  }
+
+  // ============================================================
+  // Loop + stats
+  // ============================================================
+  const elPoints = document.getElementById("po-points");
+  const elLinks = document.getElementById("po-links");
+  let statTick = 0;
+
+  function frame() {
+    step();
+    draw();
+    if (++statTick % 8 === 0) {
+      elPoints.textContent = particles.length;
+      elLinks.textContent = linkCount;
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ============================================================
+  // Pointer input
+  // ============================================================
+  function localPt(e) {
+    const rect = canvas.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+  function markTouched() { wrap.classList.add("touched"); }
+
+  canvas.addEventListener("pointermove", e => {
+    const p = localPt(e);
+    ptr.x = p.x; ptr.y = p.y; ptr.active = true;
+    markTouched();
+  });
+  canvas.addEventListener("pointerdown", e => {
+    const p = localPt(e);
+    ptr.x = p.x; ptr.y = p.y; ptr.active = true; ptr.down = true;
+    ptr.pulse = 1.1;            // throw a harder pulse
+    markTouched();
+    canvas.setPointerCapture?.(e.pointerId);
+    e.preventDefault();
+  });
+  window.addEventListener("pointerup", () => { ptr.down = false; });
+  canvas.addEventListener("pointerleave", () => { if (!ptr.down) ptr.active = false; });
+  canvas.addEventListener("pointercancel", () => { ptr.active = false; ptr.down = false; });
+
+  // ============================================================
+  // Controls
+  // ============================================================
+  document.querySelectorAll("#po-modes button").forEach(b => {
+    b.addEventListener("click", () => {
+      mode = b.dataset.mode;
+      document.querySelectorAll("#po-modes button").forEach(x =>
+        x.setAttribute("aria-pressed", x.dataset.mode === mode));
+    });
+  });
+  document.getElementById("po-calm").addEventListener("click", function () {
+    calm = !calm;
+    this.style.color = calm ? "var(--accent)" : "";
+    this.textContent = calm ? "Stir" : "Calm";
+  });
+  document.getElementById("po-reseed").addEventListener("click", () => {
+    seed(targetCount());
+  });
+
+  // ============================================================
+  // Boot
+  // ============================================================
+  let rt;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(resize, 120); });
+  resize();
+  elPoints.textContent = particles.length;
+  requestAnimationFrame(frame);
+</script>
+
+</body>
+</html>
