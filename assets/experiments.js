@@ -7,6 +7,12 @@
 
 window.EXPERIMENTS = [
   {
+    num: "008",
+    slug: "nakagin-capsule-tower",
+    title: "Nakagin Capsule Tower",
+    href: "experiments/008-nakagin-capsule-tower.html"
+  },
+  {
     num: "007",
     slug: "magic-eye-squared",
     title: "Magic Eye²",

@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>008 · Nakagin Capsule Tower — Old Guard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="../assets/logo.png">
+<link rel="apple-touch-icon" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* ---- 008 — Nakagin Capsule Tower: free iso stacking sandbox ---- */
+  .nk {
+    width: 100%;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    border: var(--rule);
+    background: var(--bg);
+  }
+  @media (max-width: 820px) {
+    .nk { grid-template-columns: 1fr; }
+  }
+
+  /* board */
+  .nk-board-wrap {
+    position: relative;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: var(--rule);
+    min-height: 360px;
+  }
+  @media (max-width: 820px) {
+    .nk-board-wrap { border-right: none; border-bottom: var(--rule); min-height: 300px; }
+  }
+  .nk-board {
+    width: 100%;
+    height: auto;
+    max-height: 460px;
+    display: block;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    overflow: visible;
+    cursor: crosshair;
+  }
+
+  /* capsule modules (shared by board + rack) */
+  .cap .face-t { fill: var(--dim); stroke: var(--fg); stroke-width: 1.3; stroke-linejoin: round; }
+  .cap .face-l { fill: var(--bg);  stroke: var(--fg); stroke-width: 1.3; stroke-linejoin: round; }
+  .cap .face-r { fill: var(--bg);  stroke: var(--fg); stroke-width: 1.3; stroke-linejoin: round; }
+  .cap .win    { fill: none; stroke: var(--accent); stroke-width: 1.3; }
+
+  .cap.ghost .face-t,
+  .cap.ghost .face-l,
+  .cap.ghost .face-r { fill: none; stroke: var(--accent); stroke-width: 1.3; stroke-dasharray: 3 3; }
+  .cap.ghost .win  { stroke: var(--accent); }
+
+  .floor { fill: none; stroke: var(--line); stroke-width: 1; }
+  .floor.hot { stroke: var(--accent); }
+
+  /* side panel — build controls sit first so they hug the board when stacked */
+  .nk-side { display: flex; flex-direction: column; }
+
+  .nk-modes {
+    display: flex;
+    border-bottom: var(--rule);
+  }
+  .nk-modes button {
+    flex: 1;
+    padding: 13px 8px;
+    border-right: var(--rule);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 120ms, color 120ms;
+  }
+  .nk-modes button:last-child { border-right: none; }
+  .nk-modes button:hover { color: var(--accent); }
+  .nk-modes button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+
+  .nk-rack {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border-bottom: var(--rule);
+  }
+  .nk-rack-piece {
+    width: 86px;
+    height: 70px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    touch-action: none;
+    border: var(--rule);
+    background: var(--dim);
+  }
+  .nk-rack-piece:active { cursor: grabbing; }
+  .nk-rack-piece svg { width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .nk-rack-copy {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    line-height: 1.7;
+  }
+  .nk-rack-copy b { color: var(--fg); font-weight: 500; }
+
+  .nk-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: var(--rule);
+  }
+  .nk-stats .cell {
+    padding: 12px 16px;
+    border-right: var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .nk-stats .cell:last-child { border-right: none; }
+  .nk-stats .lbl {
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .nk-stats .val {
+    font-size: 22px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .nk-stats .val.acc { color: var(--accent); }
+
+  .nk-actions { display: flex; margin-top: auto; }
+  .nk-actions button {
+    flex: 1;
+    padding: 13px 8px;
+    border-right: var(--rule);
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 120ms, color 120ms;
+  }
+  .nk-actions button:last-child { border-right: none; }
+  .nk-actions button:hover { background: var(--dim); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="site-header" data-header></header>
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="../index.html">Index</a>
+  <span>/</span>
+  <span class="here">008 · Nakagin Capsule Tower</span>
+</nav>
+
+<section class="exp-stage" data-screen-label="008 Nakagin Capsule Tower">
+  <div class="nk" id="nk">
+
+    <div class="nk-board-wrap">
+      <svg class="nk-board" id="nk-board" xmlns="http://www.w3.org/2000/svg" aria-label="Isometric capsule site"></svg>
+    </div>
+
+    <aside class="nk-side">
+      <div class="nk-modes" id="nk-modes">
+        <button data-mode="add" aria-pressed="true">Add</button>
+        <button data-mode="remove" aria-pressed="false">Remove</button>
+      </div>
+
+      <div class="nk-rack">
+        <div class="nk-rack-piece" id="nk-rack-piece" title="Drag a capsule onto the site">
+          <svg id="nk-rack-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="nk-rack-copy">
+          <b>Drag</b> a capsule onto the site, or <b>tap</b> the grid to stack. Switch to <b>Remove</b> to take modules off.
+        </div>
+      </div>
+
+      <div class="nk-stats">
+        <div class="cell"><span class="lbl">Capsules</span><span class="val acc" id="nk-count">0</span></div>
+        <div class="cell"><span class="lbl">Tallest</span><span class="val" id="nk-tall">0</span></div>
+      </div>
+
+      <div class="nk-actions">
+        <button id="nk-random">Randomize</button>
+        <button id="nk-clear">Clear</button>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<section class="exp-notes">
+  <div class="exp-notes-head">
+    <span class="num">008</span>
+    <span class="title">Nakagin Capsule Tower</span>
+  </div>
+  <div class="exp-notes-inner">
+    <h3>Notes</h3>
+    <div>
+      <p>Kisho Kurokawa's Nakagin Capsule Tower (Tokyo, 1972) was the built manifesto of Metabolism: 140 identical prefabricated capsules bolted onto two concrete cores, each meant to be unplugged and swapped as the city changed. None ever were. The tower was dismantled in 2022.</p>
+      <p>A sandbox in that spirit — no puzzle, no goal. Every module is the same capsule, same round porthole. Drag one from the rack onto the site, or tap the grid to drop a capsule and stack towers. Switch to Remove to peel modules back off. Build whatever city you like; it is kept locally between visits.</p>
+    </div>
+  </div>
+</section>
+
+<nav class="exp-nav" data-exp-nav aria-label="Experiment navigation"></nav>
+
+<footer class="site-footer" data-footer></footer>
+
+<script src="../assets/experiments.js"></script>
+<script src="../assets/chrome.js"></script>
+<script>
+  OG.renderHeader({ homeHref: "../index.html" });
+  OG.renderFooter({ colophonHref: "../colophon.html" });
+  OG.renderExpNav("nakagin-capsule-tower");
+
+  // ============================================================
+  // Geometry — true iso cuboid module with a circular porthole
+  // ============================================================
+  const BG = { TW: 50, TH: 25, CH: 28 };   // board capsule
+  const RG = { TW: 44, TH: 22, CH: 26 };   // rack capsule
+  const GRID = 6;        // site is GRID x GRID
+  const HCAP = 8;        // max stack height
+
+  const key = (c, r) => c + "," + r;
+  const isoX = (c, r, g) => (c - r) * g.TW / 2;
+  const isoYf = (c, r, g) => (c + r) * g.TH / 2;
+
+  // capsule whose floor sits at stack `level` (0 = ground)
+  function capsule(c, r, level, g, variant) {
+    const cx = isoX(c, r, g);
+    const cyf = isoYf(c, r, g) - level * g.CH;
+    const cyt = cyf - g.CH;
+    const P = (x, y) => `${x.toFixed(1)},${y.toFixed(1)}`;
+    const top = [P(cx, cyt - g.TH / 2), P(cx + g.TW / 2, cyt), P(cx, cyt + g.TH / 2), P(cx - g.TW / 2, cyt)].join(" ");
+    const left = [P(cx - g.TW / 2, cyf), P(cx, cyf + g.TH / 2), P(cx, cyt + g.TH / 2), P(cx - g.TW / 2, cyt)].join(" ");
+    const right = [P(cx, cyf + g.TH / 2), P(cx + g.TW / 2, cyf), P(cx + g.TW / 2, cyt), P(cx, cyt + g.TH / 2)].join(" ");
+    // porthole — a circle projected onto the SE face plane so it sits in the wall
+    const wx = cx + g.TW / 4, wy = cyf - g.CH / 2 + g.TH / 4;
+    const RAD = 0.27;
+    const ma = (RAD * g.TW / 2).toFixed(3);
+    const mb = (RAD * -g.TH / 2).toFixed(3);
+    const md = (RAD * -g.CH).toFixed(3);
+    return `<g class="cap ${variant || ""}">`
+      + `<polygon class="face-l" points="${left}"/>`
+      + `<polygon class="face-r" points="${right}"/>`
+      + `<polygon class="face-t" points="${top}"/>`
+      + `<g transform="matrix(${ma} ${mb} 0 ${md} ${wx.toFixed(1)} ${wy.toFixed(1)})">`
+      +   `<circle class="win" r="1" vector-effect="non-scaling-stroke"/>`
+      + `</g>`
+      + `</g>`;
+  }
+
+  function floorPoly(c, r, hot) {
+    const cx = isoX(c, r, BG), cy = isoYf(c, r, BG);
+    const pts = [`${cx},${(cy - BG.TH / 2).toFixed(1)}`, `${(cx + BG.TW / 2).toFixed(1)},${cy}`,
+                 `${cx},${(cy + BG.TH / 2).toFixed(1)}`, `${(cx - BG.TW / 2).toFixed(1)},${cy}`].join(" ");
+    return `<polygon class="floor${hot ? " hot" : ""}" points="${pts}"/>`;
+  }
+
+  // ============================================================
+  // State
+  // ============================================================
+  const board = document.getElementById("nk-board");
+  const nkEl = document.getElementById("nk");
+  const PLATE = [];
+  for (let r = 0; r < GRID; r++) for (let c = 0; c < GRID; c++) PLATE.push({ c, r });
+
+  let stacks = new Map();    // key -> height
+  let mode = "add";
+  let dragging = false;
+  let hotCell = null;        // {c,r,h} under cursor while dragging / hovering
+
+  const STORE = "og-nk-build-v2";
+  function save() {
+    const obj = {}; stacks.forEach((v, k) => { if (v > 0) obj[k] = v; });
+    try { localStorage.setItem(STORE, JSON.stringify(obj)); } catch (e) {}
+  }
+  function load() {
+    try {
+      const obj = JSON.parse(localStorage.getItem(STORE) || "{}");
+      stacks = new Map(Object.entries(obj).map(([k, v]) => [k, +v]));
+    } catch (e) { stacks = new Map(); }
+  }
+
+  // ============================================================
+  // Geometry helpers
+  // ============================================================
+  function svgLoc(e) {
+    const ctm = board.getScreenCTM();
+    if (!ctm) return null;
+    const pt = board.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    return pt.matrixTransform(ctm.inverse());
+  }
+  function inDiamond(p, cx, cy) {
+    return Math.abs(p.x - cx) / (BG.TW / 2) + Math.abs(p.y - cy) / (BG.TH / 2) <= 1;
+  }
+  // front-most plate cell whose top surface (ground or stack lid) is under the point
+  function topCellAt(loc) {
+    let best = null;
+    for (const cell of PLATE) {
+      const h = stacks.get(key(cell.c, cell.r)) || 0;
+      const cx = isoX(cell.c, cell.r, BG);
+      const cy = isoYf(cell.c, cell.r, BG) - h * BG.CH;
+      if (inDiamond(loc, cx, cy)) {
+        const pr = (cell.c + cell.r) * 100 + h;
+        if (!best || pr > best.pr) best = { c: cell.c, r: cell.r, h, pr };
+      }
+    }
+    return best;
+  }
+
+  function computeViewBox() {
+    let minX = Infinity, maxX = -Infinity, maxY = -Infinity, minY = Infinity;
+    for (const cell of PLATE) {
+      const cx = isoX(cell.c, cell.r, BG), cyf = isoYf(cell.c, cell.r, BG);
+      minX = Math.min(minX, cx - BG.TW / 2);
+      maxX = Math.max(maxX, cx + BG.TW / 2);
+      maxY = Math.max(maxY, cyf + BG.TH / 2);
+      const h = stacks.get(key(cell.c, cell.r)) || 0;
+      minY = Math.min(minY, cyf - h * BG.CH - BG.TH / 2);
+    }
+    minY -= BG.CH;      // headroom for the next capsule
+    const pad = 16;
+    return { x: minX - pad, y: minY - pad, w: (maxX - minX) + pad * 2, h: (maxY - minY) + pad * 2 };
+  }
+
+  // ============================================================
+  // Render
+  // ============================================================
+  function renderBoard() {
+    const vb = computeViewBox();
+    board.setAttribute("viewBox", `${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
+    board.style.maxWidth = vb.w + "px";
+
+    let svg = "";
+    // 1. site plate
+    for (const cell of PLATE) {
+      const isHot = hotCell && hotCell.c === cell.c && hotCell.r === cell.r;
+      svg += floorPoly(cell.c, cell.r, isHot);
+    }
+    // 2. capsules, painter order: depth then height
+    const list = [];
+    for (const cell of PLATE) {
+      const h = stacks.get(key(cell.c, cell.r)) || 0;
+      for (let lvl = 0; lvl < h; lvl++) list.push({ c: cell.c, r: cell.r, lvl });
+    }
+    list.sort((a, b) => (a.c + a.r) - (b.c + b.r) || a.lvl - b.lvl);
+    list.forEach(it => { svg += capsule(it.c, it.r, it.lvl, BG, ""); });
+
+    // 3. ghost preview on top of the hot column while dragging
+    if (dragging && hotCell) svg += capsule(hotCell.c, hotCell.r, hotCell.h, BG, "ghost");
+
+    board.innerHTML = svg;
+  }
+
+  function renderRack() {
+    document.getElementById("nk-rack-svg").innerHTML = (() => {
+      const tmp = capsule(0, 0, 0, RG, "");
+      // build a viewBox just for the single rack capsule
+      const cx = 0, cyf = 0, cyt = -RG.CH;
+      const minX = cx - RG.TW / 2, maxX = cx + RG.TW / 2;
+      const minY = cyt - RG.TH / 2, maxY = cyf + RG.TH / 2;
+      const pad = 8;
+      document.getElementById("nk-rack-svg").setAttribute("viewBox",
+        `${minX - pad} ${minY - pad} ${(maxX - minX) + pad * 2} ${(maxY - minY) + pad * 2}`);
+      return tmp;
+    })();
+  }
+
+  function updateStats() {
+    let total = 0, tall = 0;
+    stacks.forEach(v => { total += v; if (v > tall) tall = v; });
+    document.getElementById("nk-count").textContent = total;
+    document.getElementById("nk-tall").textContent = tall;
+  }
+
+  function refresh() { renderBoard(); updateStats(); }
+
+  // ============================================================
+  // Actions
+  // ============================================================
+  function addAt(cell) {
+    if (!cell) return;
+    const k = key(cell.c, cell.r);
+    const h = stacks.get(k) || 0;
+    if (h >= HCAP) return;
+    stacks.set(k, h + 1);
+    refresh(); save();
+  }
+  function removeAt(cell) {
+    if (!cell) return;
+    const k = key(cell.c, cell.r);
+    const h = stacks.get(k) || 0;
+    if (h <= 0) return;
+    if (h - 1 === 0) stacks.delete(k); else stacks.set(k, h - 1);
+    refresh(); save();
+  }
+
+  // ============================================================
+  // Pointer — rack drag + board tap
+  // ============================================================
+  let down = null;   // {x,y,source}
+
+  function startDrag(e) {
+    dragging = true;
+    const loc = svgLoc(e);
+    hotCell = loc ? topCellAt(loc) : null;
+    renderBoard();
+  }
+
+  // rack: drag a capsule onto the site
+  document.getElementById("nk-rack-piece").addEventListener("pointerdown", e => {
+    down = { x: e.clientX, y: e.clientY, source: "rack" };
+    startDrag(e);
+    e.preventDefault();
+  });
+
+  // board: press to begin a hover/tap
+  board.addEventListener("pointerdown", e => {
+    down = { x: e.clientX, y: e.clientY, source: "board" };
+    dragging = true;
+    const loc = svgLoc(e);
+    hotCell = loc ? topCellAt(loc) : null;
+    renderBoard();
+    e.preventDefault();
+  });
+
+  let raf = false;
+  window.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    if (raf) return;
+    raf = true;
+    requestAnimationFrame(() => {
+      raf = false;
+      const loc = svgLoc(e);
+      hotCell = loc ? topCellAt(loc) : null;
+      renderBoard();
+    });
+  });
+
+  window.addEventListener("pointerup", e => {
+    if (!dragging) return;
+    dragging = false;
+    const loc = svgLoc(e);
+    const cell = loc ? topCellAt(loc) : null;
+    if (down && down.source === "rack") {
+      // dragging from the rack always adds a module
+      if (cell) addAt(cell);
+    } else if (down && down.source === "board") {
+      // a board press: add or remove per current mode
+      if (cell) { mode === "remove" ? removeAt(cell) : addAt(cell); }
+    }
+    hotCell = null;
+    down = null;
+    renderBoard();
+  });
+
+  // ============================================================
+  // Controls
+  // ============================================================
+  document.querySelectorAll("#nk-modes button").forEach(b => {
+    b.addEventListener("click", () => {
+      mode = b.dataset.mode;
+      document.querySelectorAll("#nk-modes button").forEach(x =>
+        x.setAttribute("aria-pressed", x.dataset.mode === mode));
+    });
+  });
+
+  document.getElementById("nk-clear").addEventListener("click", () => {
+    stacks = new Map(); refresh(); save();
+  });
+
+  document.getElementById("nk-random").addEventListener("click", () => {
+    stacks = new Map();
+    // a soft pyramid-ish skyline so the result reads as a tower cluster
+    const cx = (GRID - 1) / 2, cy = (GRID - 1) / 2;
+    for (const cell of PLATE) {
+      const d = Math.hypot(cell.c - cx, cell.r - cy);
+      const base = Math.max(0, 4.2 - d * 1.1);
+      const h = Math.max(0, Math.round(base + (Math.random() * 2 - 1)));
+      if (h > 0) stacks.set(key(cell.c, cell.r), Math.min(HCAP, h));
+    }
+    refresh(); save();
+  });
+
+  // ============================================================
+  // Boot
+  // ============================================================
+  load();
+  renderRack();
+  refresh();
+  window.addEventListener("resize", () => { /* vector board reflows via viewBox */ });
+</script>
+
+</body>
+</html>
