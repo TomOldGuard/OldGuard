@@ -136,6 +136,41 @@ window.THUMBS = {
     `;
   },
 
+  /* 010 — Onigiri: a wrapped triangle with one peeled coral tab */
+  "onigiri": (root) => {
+    root.innerHTML = `
+      <div class="thumb-on">
+        <svg viewBox="0 0 120 110" aria-hidden="true">
+          <!-- rounded rice triangle -->
+          <path class="rice" d="M 60 18 Q 60 14 63 18 L 96 80 Q 98 84 94 84 L 26 84 Q 22 84 24 80 Z"/>
+          <!-- nori band -->
+          <clipPath id="thRice"><path d="M 60 18 Q 60 14 63 18 L 96 80 Q 98 84 94 84 L 26 84 Q 22 84 24 80 Z"/></clipPath>
+          <g clip-path="url(#thRice)"><rect class="nori" x="14" y="58" width="92" height="34"/></g>
+          <!-- coral filling peek -->
+          <circle class="fill" cx="60" cy="44" r="7"/>
+          <!-- numbered pull tabs -->
+          <rect class="tab" x="53" y="6" width="14" height="9" rx="2"/>
+          <text class="tn" x="60" y="13" text-anchor="middle">1</text>
+          <rect class="tab dim" x="84" y="64" width="14" height="9" rx="2"/>
+          <text class="tn dim" x="91" y="71" text-anchor="middle">2</text>
+          <rect class="tab dim" x="22" y="64" width="14" height="9" rx="2"/>
+          <text class="tn dim" x="29" y="71" text-anchor="middle">3</text>
+        </svg>
+      </div>
+      <style>
+        .thumb-on { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+        .thumb-on svg { width:72%; height:72%; overflow:visible; }
+        .thumb-on .rice { fill: var(--bg); stroke: var(--fg); stroke-width: 1.4; stroke-linejoin: round; }
+        .thumb-on .nori { fill: var(--fg); }
+        .thumb-on .fill { fill: var(--accent); }
+        .thumb-on .tab { fill: var(--accent); }
+        .thumb-on .tab.dim { opacity: 0.32; }
+        .thumb-on .tn { fill: #0a0a0a; font-family: var(--mono); font-weight: 600; font-size: 7px; }
+        .thumb-on .tn.dim { opacity: 0.32; }
+      </style>
+    `;
+  },
+
   /* 009 — Particle Ocean: a small drifting plexus with one coral hub */
   "particle-ocean": (root) => {
     root.innerHTML = `

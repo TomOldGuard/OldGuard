@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>010 · Onigiri — Old Guard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="../assets/logo.png">
+<link rel="apple-touch-icon" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* ---- 010 — Onigiri: the konbini 1·2·3 wrapper, unwrapped ---- */
+  .on {
+    width: 100%;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    border: var(--rule);
+    background: var(--bg);
+  }
+  @media (max-width: 820px) {
+    .on { grid-template-columns: 1fr; }
+  }
+
+  /* scene */
+  .on-board-wrap {
+    position: relative;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: var(--rule);
+    min-height: 380px;
+  }
+  @media (max-width: 820px) {
+    .on-board-wrap { border-right: none; border-bottom: var(--rule); min-height: 320px; }
+  }
+  .on-board {
+    width: 100%;
+    max-width: 380px;
+    height: auto;
+    display: block;
+    overflow: visible;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* rice + nori + filling (theme-driven 2-tone line graphic) */
+  .on-rice  { fill: var(--bg); stroke: var(--fg); stroke-width: 1.4; stroke-linejoin: round; }
+  .on-grain { stroke: var(--fg); stroke-width: 1; opacity: 0.16; stroke-linecap: round; }
+  .on-nori  { fill: var(--fg); }
+  .on-norigrain { stroke: var(--bg); stroke-width: 1; opacity: 0.12; }
+  .on-fill  { transition: opacity 420ms ease; }
+  .on-fill .blob { fill: var(--accent); }
+
+  /* film */
+  .on-film  { fill: var(--bg); fill-opacity: 0.5; stroke: var(--fg); stroke-opacity: 0.42; stroke-width: 1.2; }
+  .on-print { fill: var(--fg); font-family: var(--mono); }
+  .on-print.acc { fill: var(--accent); }
+  .on-bar   { fill: var(--fg); opacity: 0.55; }
+  .on-seam  { stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 4 4; }
+
+  .on-wing { will-change: transform, opacity; }
+
+  /* pull tabs */
+  .on-tab { cursor: grab; }
+  .on-tab:active { cursor: grabbing; }
+  .on-tab .tab-bg { fill: var(--accent); }
+  .on-tab .tab-num { fill: #0a0a0a; font-family: var(--mono); font-weight: 600; }
+  .on-tab .tab-chev { stroke: #0a0a0a; stroke-width: 1.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .on-tab.locked { opacity: 0.3; pointer-events: none; }
+  .on-tab.active .tab-bg { animation: on-pulse 1.5s ease-in-out infinite; }
+  @keyframes on-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+  /* side panel */
+  .on-side { display: flex; flex-direction: column; }
+
+  .on-steps {
+    display: flex;
+    border-bottom: var(--rule);
+  }
+  .on-steps .step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 15px 8px;
+    border-right: var(--rule);
+  }
+  .on-steps .step:last-child { border-right: none; }
+  .on-steps .dot {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.4px solid var(--line);
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 160ms;
+  }
+  .on-steps .step .cap {
+    font-size: 8.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .on-steps .step[data-state="active"] .dot {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .on-steps .step[data-state="active"] .cap { color: var(--accent); }
+  .on-steps .step[data-state="done"] .dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0a0a0a;
+  }
+
+  .on-readout {
+    flex: 1;
+    padding: 18px 16px;
+    border-bottom: var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: center;
+  }
+  .on-readout .lbl {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+  .on-readout .filling {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    color: var(--fg);
+  }
+  .on-readout .filling.sealed { color: var(--muted); }
+  .on-readout .note { font-size: 12px; color: var(--muted); }
+  .on-readout .hint {
+    margin-top: 12px;
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .on-readout .hint b { color: var(--fg); font-weight: 500; }
+  .on-readout .hint .n { color: var(--accent); font-weight: 600; }
+
+  .on-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: var(--rule);
+  }
+  .on-stats .cell {
+    padding: 12px 16px;
+    border-right: var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .on-stats .cell:last-child { border-right: none; }
+  .on-stats .lbl {
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .on-stats .val {
+    font-size: 22px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .on-stats .val.acc { color: var(--accent); }
+
+  .on-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .on-actions button {
+    padding: 13px 8px;
+    border-right: var(--rule);
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 120ms, color 120ms;
+  }
+  .on-actions button:last-child { border-right: none; }
+  .on-actions button:hover { background: var(--dim); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="site-header" data-header></header>
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="../index.html">Index</a>
+  <span>/</span>
+  <span class="here">010 · Onigiri</span>
+</nav>
+
+<section class="exp-stage" data-screen-label="010 Onigiri">
+  <div class="on" id="on">
+
+    <div class="on-board-wrap">
+      <svg class="on-board" id="on-board" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" aria-label="Konbini onigiri wrapper"></svg>
+    </div>
+
+    <aside class="on-side">
+      <div class="on-steps" id="on-steps">
+        <div class="step" data-step="1"><span class="dot">1</span><span class="cap">Split</span></div>
+        <div class="step" data-step="2"><span class="dot">2</span><span class="cap">Peel R</span></div>
+        <div class="step" data-step="3"><span class="dot">3</span><span class="cap">Peel L</span></div>
+      </div>
+
+      <div class="on-readout">
+        <span class="lbl">Filling</span>
+        <span class="filling sealed" id="on-filling">Sealed</span>
+        <span class="note" id="on-note">open to reveal</span>
+        <span class="hint">
+          Pull tab <span class="n">①</span> to slit the film, then <span class="n">②</span> and <span class="n">③</span> to peel each wing. The <b>nori</b> wraps as the film slides away.
+        </span>
+      </div>
+
+      <div class="on-stats">
+        <div class="cell"><span class="lbl">Opened</span><span class="val acc" id="on-count">0</span></div>
+        <div class="cell"><span class="lbl">Nori</span><span class="val" id="on-state">Crisp</span></div>
+      </div>
+
+      <div class="on-actions">
+        <button id="on-auto">Auto-open</button>
+        <button id="on-new">New onigiri</button>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<section class="exp-notes">
+  <div class="exp-notes-head">
+    <span class="num">010</span>
+    <span class="title">Onigiri</span>
+  </div>
+  <div class="exp-notes-inner">
+    <h3>Notes</h3>
+    <div>
+      <p>The triangular convenience-store onigiri sold across Japan hides a small marvel of packaging design. A sheet of nori is held away from the rice by a layer of film, so the seaweed stays crisp on the shelf instead of going soft against the wet rice. To eat it you run a three-step sequence printed right on the wrapper: pull tab ① to slit the film down the back, then ② and ③ to draw out each wing — and the nori folds onto the rice exactly as the plastic leaves.</p>
+      <p>A sandbox for that one gesture. Drag the numbered tabs in order, or click them; release past halfway and the pull completes, otherwise it springs back. Open it and a filling is revealed — umeboshi, sake, mentaiko, whatever the seed dealt. No goal beyond the satisfying unwrap. Your count is kept locally between visits.</p>
+    </div>
+  </div>
+</section>
+
+<nav class="exp-nav" data-exp-nav aria-label="Experiment navigation"></nav>
+
+<footer class="site-footer" data-footer></footer>
+
+<script src="../assets/experiments.js"></script>
+<script src="../assets/chrome.js"></script>
+<script>
+  OG.renderHeader({ homeHref: "../index.html" });
+  OG.renderFooter({ colophonHref: "../colophon.html" });
+  OG.renderExpNav("onigiri");
+
+  // ============================================================
+  // Geometry helpers — a rounded triangle for the rice/film
+  // ============================================================
+  const sub = (a, b) => ({ x: a.x - b.x, y: a.y - b.y });
+  const add = (a, b) => ({ x: a.x + b.x, y: a.y + b.y });
+  const mul = (a, s) => ({ x: a.x * s, y: a.y * s });
+  const norm = (a) => { const m = Math.hypot(a.x, a.y) || 1; return { x: a.x / m, y: a.y / m }; };
+
+  function roundTri(V, r) {
+    let d = "";
+    for (let i = 0; i < 3; i++) {
+      const cur = V[i], prev = V[(i + 2) % 3], next = V[(i + 1) % 3];
+      const A = add(cur, mul(norm(sub(prev, cur)), r));
+      const B = add(cur, mul(norm(sub(next, cur)), r));
+      d += (i === 0 ? `M ${A.x.toFixed(1)} ${A.y.toFixed(1)} ` : `L ${A.x.toFixed(1)} ${A.y.toFixed(1)} `);
+      d += `Q ${cur.x.toFixed(1)} ${cur.y.toFixed(1)} ${B.x.toFixed(1)} ${B.y.toFixed(1)} `;
+    }
+    return d + "Z";
+  }
+
+  // Triangle vertices: apex, right base, left base
+  const RV = [{ x: 130, y: 38 }, { x: 224, y: 212 }, { x: 36, y: 212 }];
+  const C = { x: (RV[0].x + RV[1].x + RV[2].x) / 3, y: (RV[0].y + RV[1].y + RV[2].y) / 3 };
+  const FV = RV.map(v => add(v, mul(norm(sub(v, C)), 11)));   // film inflated outward
+  const RICE_D = roundTri(RV, 24);
+  const FILM_D = roundTri(FV, 28);
+  const NORI_TOP = 120;   // nori band starts here
+
+  // tiny seeded RNG for stable rice grains
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function grains() {
+    const rnd = mulberry32(7); let g = "";
+    for (let i = 0; i < 26; i++) {
+      // sample inside the upper (rice) region of the triangle
+      const t = rnd(), s = rnd();
+      const y = 58 + t * (NORI_TOP - 58);
+      const halfW = ((y - 38) / (212 - 38)) * (224 - 130);   // triangle half-width at y
+      const x = 130 + (s * 2 - 1) * halfW * 0.82;
+      const a = (rnd() * 60 - 30).toFixed(1);
+      g += `<line class="on-grain" x1="${(x - 3).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + 3).toFixed(1)}" y2="${y.toFixed(1)}" transform="rotate(${a} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+    }
+    return g;
+  }
+
+  // ============================================================
+  // Scene — built once, then mutated by transforms
+  // ============================================================
+  const board = document.getElementById("on-board");
+
+  function buildScene() {
+    board.innerHTML = `
+      <defs>
+        <clipPath id="riceClip"><path d="${RICE_D}"/></clipPath>
+        <clipPath id="halfL"><rect x="-40" y="-20" width="170" height="300"/></clipPath>
+        <clipPath id="halfR"><rect x="130" y="-20" width="170" height="300"/></clipPath>
+      </defs>
+
+      <!-- rice body -->
+      <path class="on-rice" d="${RICE_D}"/>
+      <g clip-path="url(#riceClip)">${grains()}</g>
+
+      <!-- nori band, split into two halves so each settles as its wing leaves -->
+      <g clip-path="url(#riceClip)">
+        <g id="on-noriL">
+          <rect class="on-nori" x="-40" y="${NORI_TOP}" width="170" height="110"/>
+          ${[0, 1, 2, 3].map(i => `<line class="on-norigrain" x1="-40" y1="${NORI_TOP + 14 + i * 22}" x2="130" y2="${NORI_TOP + 14 + i * 22}"/>`).join("")}
+        </g>
+        <g id="on-noriR">
+          <rect class="on-nori" x="130" y="${NORI_TOP}" width="170" height="110"/>
+          ${[0, 1, 2, 3].map(i => `<line class="on-norigrain" x1="130" y1="${NORI_TOP + 14 + i * 22}" x2="300" y2="${NORI_TOP + 14 + i * 22}"/>`).join("")}
+        </g>
+      </g>
+
+      <!-- (filling indicator removed) -->
+
+
+      <!-- LEFT wing (film) — holds tab 3 -->
+      <g class="on-wing" id="on-wingL" clip-path="url(#halfL)">
+        <path class="on-film" d="${FILM_D}"/>
+        <text class="on-print" x="127" y="74" font-size="11" letter-spacing="3" text-anchor="end">ONI</text>
+        <text class="on-print" x="60" y="190" font-size="6.5" letter-spacing="1.5">RICE·NORI</text>
+        <g class="on-bar">${[0, 2, 3, 5, 6, 8].map(i => `<rect x="${48 + i * 2}" y="196" width="1.2" height="11"/>`).join("")}</g>
+        ${tabSVG("3", 60, 150, "left")}
+      </g>
+
+      <!-- RIGHT wing (film) — holds tab 2 -->
+      <g class="on-wing" id="on-wingR" clip-path="url(#halfR)">
+        <path class="on-film" d="${FILM_D}"/>
+        <text class="on-print" x="133" y="74" font-size="11" letter-spacing="3">GIRI</text>
+        <text class="on-print acc" x="138" y="100" font-size="6.5" letter-spacing="1.5">SEAWEED WRAP</text>
+        <text class="on-print" x="200" y="190" font-size="6.5" letter-spacing="1" text-anchor="end">490 1234</text>
+        ${tabSVG("2", 200, 150, "right")}
+      </g>
+
+      <!-- center seam revealed once split -->
+      <line class="on-seam" id="on-seam" x1="130" y1="44" x2="130" y2="210" style="opacity:0"/>
+
+      <!-- STEP 1 pull ribbon (runs over the top), holds tab 1 -->
+      <g id="on-ribbon">
+        <line class="on-seam" x1="130" y1="20" x2="130" y2="150" style="opacity:0.9"/>
+        ${tabSVG("1", 130, 20, "down")}
+      </g>
+    `;
+  }
+
+  // a coral pull-tab: rounded pill with the number and a directional
+  // chevron in separate slots (with a clear gap between them)
+  function tabSVG(num, cx, cy, dir) {
+    const w = 38, h = 20, rx = 5;
+    const x = cx - w / 2, y = cy - h / 2;
+    const leftSlot = cx - 8, rightSlot = cx + 9, cw = 4;
+    let numX, chev;
+    if (dir === "down") {            // chevron (↓) left, number right
+      numX = rightSlot;
+      chev = `<path class="tab-chev" d="M ${leftSlot - cw} ${cy - 2} L ${leftSlot} ${cy + 3} L ${leftSlot + cw} ${cy - 2}"/>`;
+    } else if (dir === "right") {    // number left, chevron (→) right
+      numX = leftSlot;
+      chev = `<path class="tab-chev" d="M ${rightSlot - 2} ${cy - cw} L ${rightSlot + 3} ${cy} L ${rightSlot - 2} ${cy + cw}"/>`;
+    } else {                         // left: chevron (←) left, number right
+      numX = rightSlot;
+      chev = `<path class="tab-chev" d="M ${leftSlot + 2} ${cy - cw} L ${leftSlot - 3} ${cy} L ${leftSlot + 2} ${cy + cw}"/>`;
+    }
+    return `<g class="on-tab locked" id="on-tab${num}" data-tab="${num}">
+      <rect class="tab-bg" x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}"/>
+      <text class="tab-num" x="${numX}" y="${cy + 0.5}" font-size="11" text-anchor="middle" dominant-baseline="middle">${num}</text>
+      ${chev}
+    </g>`;
+  }
+
+  // ============================================================
+  // State
+  // ============================================================
+  const FILLINGS = [
+    { n: "Umeboshi", d: "pickled plum" },
+    { n: "Sake", d: "grilled salmon" },
+    { n: "Tuna mayo", d: "tuna + japanese mayo" },
+    { n: "Konbu", d: "simmered kelp" },
+    { n: "Okaka", d: "bonito flake + soy" },
+    { n: "Tarako", d: "salted cod roe" },
+    { n: "Mentaiko", d: "spicy pollock roe" },
+    { n: "Ebi mayo", d: "shrimp + mayo" }
+  ];
+
+  const COUNT_KEY = "og-onigiri-opened-v1";
+  let count = 0;
+  try { count = parseInt(localStorage.getItem(COUNT_KEY) || "0", 10) || 0; } catch (e) {}
+
+  const S = { p1: 0, p2: 0, p3: 0, phase: "sealed", done2: false, done3: false, filling: null, counted: false };
+
+  let el = {};
+  function cache() {
+    el = {
+      ribbon: document.getElementById("on-ribbon"),
+      seam: document.getElementById("on-seam"),
+      wingL: document.getElementById("on-wingL"),
+      wingR: document.getElementById("on-wingR"),
+      noriL: document.getElementById("on-noriL"),
+      noriR: document.getElementById("on-noriR"),
+      t1: document.getElementById("on-tab1"),
+      t2: document.getElementById("on-tab2"),
+      t3: document.getElementById("on-tab3")
+    };
+  }
+
+  // ============================================================
+  // Render / apply
+  // ============================================================
+  function applyAll() {
+    const cl = (v) => Math.max(0, Math.min(1, v));
+    const p1 = cl(S.p1), p2 = cl(S.p2), p3 = cl(S.p3);
+
+    el.ribbon.setAttribute("transform", `translate(0 ${(p1 * 240).toFixed(1)})`);
+    el.ribbon.style.opacity = (1 - p1).toFixed(3);
+    el.seam.style.opacity = p1.toFixed(3);
+
+    el.wingR.setAttribute("transform", `translate(${(p2 * 134).toFixed(1)} ${(-p2 * 12).toFixed(1)}) rotate(${(p2 * 8).toFixed(2)} 224 212)`);
+    el.wingR.style.opacity = (1 - Math.min(1, p2 * 1.08)).toFixed(3);
+    el.wingL.setAttribute("transform", `translate(${(-p3 * 134).toFixed(1)} ${(-p3 * 12).toFixed(1)}) rotate(${(-p3 * 8).toFixed(2)} 36 212)`);
+    el.wingL.style.opacity = (1 - Math.min(1, p3 * 1.08)).toFixed(3);
+
+    el.noriR.style.opacity = (0.7 + 0.3 * p2).toFixed(3);
+    el.noriL.style.opacity = (0.7 + 0.3 * p3).toFixed(3);
+  }
+
+  function updateTabs() {
+    const set = (g, on) => { if (!g) return; g.classList.toggle("active", on); g.classList.toggle("locked", !on); };
+    set(el.t1, S.phase === "sealed");
+    set(el.t2, S.phase === "split" && !S.done2);
+    set(el.t3, S.phase === "split" && !S.done3);
+  }
+
+  function updatePanel() {
+    document.getElementById("on-count").textContent = count;
+    const opened = S.phase === "open";
+    const fEl = document.getElementById("on-filling");
+    const nEl = document.getElementById("on-note");
+    if (opened && S.filling) {
+      fEl.textContent = S.filling.n; fEl.classList.remove("sealed");
+      nEl.textContent = S.filling.d;
+    } else {
+      fEl.textContent = "Sealed"; fEl.classList.add("sealed");
+      nEl.textContent = "open to reveal";
+    }
+    document.getElementById("on-state").textContent = opened ? "Wrapped" : "Crisp";
+
+    // step pills
+    const state = (n) => {
+      if (n === 1) return S.phase === "sealed" ? "active" : "done";
+      if (n === 2) return S.done2 ? "done" : (S.phase === "split" ? "active" : "idle");
+      if (n === 3) return S.done3 ? "done" : (S.phase === "split" ? "active" : "idle");
+    };
+    document.querySelectorAll("#on-steps .step").forEach(s => {
+      s.setAttribute("data-state", state(+s.dataset.step));
+    });
+  }
+
+  // ============================================================
+  // Tweening (manual rAF so SVG attribute changes animate smoothly)
+  // ============================================================
+  const raf = {};
+  function tween(tab, to, dur, after) {
+    cancelAnimationFrame(raf[tab]);
+    const key = "p" + tab, from = S[key], t0 = performance.now();
+    function step(now) {
+      let k = Math.min(1, (now - t0) / dur);
+      k = 1 - Math.pow(1 - k, 3);
+      S[key] = from + (to - from) * k;
+      applyAll();
+      if (k < 1) { raf[tab] = requestAnimationFrame(step); }
+      else { S[key] = to; applyAll(); if (after) after(); }
+    }
+    raf[tab] = requestAnimationFrame(step);
+  }
+
+  function markDone(tab) {
+    if (tab === "1") { S.phase = "split"; }
+    if (tab === "2") { S.done2 = true; }
+    if (tab === "3") { S.done3 = true; }
+    if (S.done2 && S.done3 && S.phase !== "open") {
+      S.phase = "open";
+      if (!S.counted) {
+        count++; S.counted = true;
+        try { localStorage.setItem(COUNT_KEY, String(count)); } catch (e) {}
+      }
+    }
+    updateTabs(); updatePanel(); applyAll();
+  }
+
+  function complete(tab) { tween(tab, 1, 340, () => markDone(tab)); }
+  function cancel(tab) { tween(tab, 0, 260); }
+
+  // ============================================================
+  // Pointer — drag a tab in its direction, release to commit
+  // ============================================================
+  let drag = null;
+  function tabActive(tab) {
+    if (tab === "1") return S.phase === "sealed";
+    if (tab === "2") return S.phase === "split" && !S.done2;
+    if (tab === "3") return S.phase === "split" && !S.done3;
+    return false;
+  }
+
+  function bindTabs() {
+    [["1", el.t1], ["2", el.t2], ["3", el.t3]].forEach(([tab, g]) => {
+      g.addEventListener("pointerdown", (e) => {
+        if (!tabActive(tab)) return;
+        cancelAnimationFrame(raf[tab]);
+        drag = { tab, sx: e.clientX, sy: e.clientY, moved: 0 };
+        try { g.setPointerCapture(e.pointerId); } catch (err) {}
+        e.preventDefault();
+      });
+    });
+  }
+
+  window.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    const rect = board.getBoundingClientRect();
+    const DIST = Math.max(70, rect.height * 0.34);
+    const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+    drag.moved = Math.hypot(dx, dy);
+    let p = 0;
+    if (drag.tab === "1") p = dy / DIST;
+    if (drag.tab === "2") p = dx / DIST;
+    if (drag.tab === "3") p = -dx / DIST;
+    S["p" + drag.tab] = Math.max(0, Math.min(1, p));
+    applyAll();
+  });
+
+  window.addEventListener("pointerup", () => {
+    if (!drag) return;
+    const tab = drag.tab, p = S["p" + tab];
+    if (drag.moved < 6) { complete(tab); }        // tap = pull all the way
+    else if (p >= 0.55) { complete(tab); }
+    else { cancel(tab); }
+    drag = null;
+  });
+
+  // ============================================================
+  // Actions
+  // ============================================================
+  function reset() {
+    Object.keys(raf).forEach(k => cancelAnimationFrame(raf[k]));
+    S.p1 = S.p2 = S.p3 = 0;
+    S.phase = "sealed"; S.done2 = false; S.done3 = false; S.counted = false;
+    S.filling = FILLINGS[Math.floor(Math.random() * FILLINGS.length)];
+    applyAll(); updateTabs(); updatePanel();
+  }
+
+  function autoOpen() {
+    reset();
+    tween("1", 1, 420, () => {
+      markDone("1");
+      setTimeout(() => {
+        tween("2", 1, 460, () => markDone("2"));
+        setTimeout(() => tween("3", 1, 520, () => markDone("3")), 240);
+      }, 240);
+    });
+  }
+
+  document.getElementById("on-new").addEventListener("click", reset);
+  document.getElementById("on-auto").addEventListener("click", autoOpen);
+
+  // ============================================================
+  // Boot
+  // ============================================================
+  buildScene();
+  cache();
+  bindTabs();
+  S.filling = FILLINGS[Math.floor(Math.random() * FILLINGS.length)];
+  applyAll(); updateTabs(); updatePanel();
+</script>
+
+</body>
+</html>
