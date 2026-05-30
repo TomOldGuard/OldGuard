@@ -140,6 +140,9 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   text-wrap: balance;
 }
 .intro h1 .accent { color: var(--accent); }
+@media (max-width: 720px) {
+  .intro h1 { font-size: clamp(33px, 9vw, 84px); }
+}
 .intro h1 .lower {
   display: block;
   font-weight: 300;
