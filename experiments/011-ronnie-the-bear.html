@@ -340,9 +340,7 @@
 <script src="../assets/experiments.js"></script>
 <script src="../assets/chrome.js"></script>
 <script>
-  OG.renderHeader({ homeHref: "../index.html" });
-  OG.renderFooter({ colophonHref: "../colophon.html" });
-  OG.renderExpNav("ronnie-the-bear");
+  OG.initExp("ronnie-the-bear");
 
   // ============================================================
   // State
@@ -456,9 +454,14 @@
   // ============================================================
   let actx = null, analyser = null, timeData = null, NOISEBUF = null;
 
+  let unlocked = false;
+
   function ensureCtx() {
     if (!actx) {
       actx = new (window.AudioContext || window.webkitAudioContext)();
+      // iOS 16.4+: opt into the "playback" audio session so the hardware
+      // mute switch / silent mode don't silence WebAudio output.
+      try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
       analyser = actx.createAnalyser();
       analyser.fftSize = 1024;
       analyser.smoothingTimeConstant = 0.4;
@@ -471,8 +474,32 @@
       for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
     }
     if (actx.state === "suspended") actx.resume();
+    // iOS unlocks audio only after a silent buffer has played inside a
+    // user gesture — kick one through the first time.
+    if (!unlocked) {
+      try {
+        const src = actx.createBufferSource();
+        src.buffer = actx.createBuffer(1, 1, actx.sampleRate);
+        src.connect(actx.destination);
+        src.start(0);
+        unlocked = true;
+      } catch (e) {}
+    }
     return actx;
   }
+
+  // iOS grants audio on a *completed* tap (touchend/click), not on the
+  // pointerdown that starts a drag — so prime the context on the first of
+  // any of these, before the user reaches for Ronnie.
+  function primeAudio() {
+    ensureCtx();
+    if (unlocked && actx && actx.state === "running") {
+      ["touchend", "click", "pointerdown"].forEach(ev =>
+        window.removeEventListener(ev, primeAudio));
+    }
+  }
+  ["touchend", "click", "pointerdown"].forEach(ev =>
+    window.addEventListener(ev, primeAudio, { passive: true }));
 
   function shaperCurve(amount) {
     const n = 1024, curve = new Float32Array(n), k = amount * 90;

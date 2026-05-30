@@ -26,12 +26,11 @@
   <div class="toolbar-count" data-toolbar-count></div>
 </nav>
 
-<main class="experiments" data-view="list" data-experiments></main>
+<main class="experiments" data-experiments></main>
 
 <footer class="site-footer" data-footer></footer>
 
 <script src="assets/experiments.js"></script>
-<script src="assets/thumbs.js"></script>
 <script src="assets/chrome.js"></script>
 <script>
   // Render shared chrome
@@ -42,11 +41,6 @@
   const mount = document.querySelector("[data-experiments]");
   mount.innerHTML = EXPERIMENTS.map(e => `
     <a class="card" href="${e.href}">
-      <div class="thumb stripes" data-thumb="${e.slug}">
-        <div class="thumb-canvas" data-thumb-mount="${e.slug}"></div>
-        <span class="thumb-arrow">↗</span>
-        <span class="thumb-label">${e.num}</span>
-      </div>
       <div class="card-meta">
         <span class="meta-num">${e.num}</span>
         <span class="meta-title">${e.title}</span>
@@ -57,12 +51,6 @@
 
   document.querySelector("[data-toolbar-count]").textContent =
     `${String(EXPERIMENTS.length).padStart(3,'0')} EXPERIMENTS`;
-
-  // Render thumbnail mini-previews
-  EXPERIMENTS.forEach(e => {
-    const m = document.querySelector(`[data-thumb-mount="${e.slug}"]`);
-    if (m && window.THUMBS && THUMBS[e.slug]) THUMBS[e.slug](m);
-  });
 </script>
 
 </body>

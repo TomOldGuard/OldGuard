@@ -88,5 +88,12 @@
     }
   }
 
-  window.OG = { renderHeader, renderFooter, renderExpNav };
+  // ---- ONE-CALL SETUP for experiment detail pages --------------
+  function initExp(slug) {
+    renderHeader({ homeHref: "../index.html" });
+    renderFooter({ colophonHref: "../colophon.html" });
+    renderExpNav(slug);
+  }
+
+  window.OG = { renderHeader, renderFooter, renderExpNav, initExp };
 })();

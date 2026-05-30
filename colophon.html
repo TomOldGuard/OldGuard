@@ -55,6 +55,9 @@
 
   @media (max-width: 720px) {
     .col-row { grid-template-columns: 1fr; gap: 14px; }
+    /* mobile Safari's text-wrap:pretty leaves short, ragged lines that
+       don't fill the column width — fall back to normal wrapping. */
+    .col-content p { text-wrap: wrap; }
   }
 
   .col-grid {

@@ -150,8 +150,6 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   color: var(--muted);
 }
 
-@keyframes blink { 50% { opacity: 0; } }
-
 /* ============================================================
    TOOLBAR (filter + view toggle)
    ============================================================ */
@@ -171,172 +169,69 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 }
 
 .toolbar-count { font-weight: 500; color: var(--fg); }
-.toolbar-meta { color: var(--muted); }
-
-.view-toggle {
-  display: flex;
-  border: var(--rule);
-}
-.view-toggle button {
-  padding: 6px 10px;
-  font-size: 11px;
-  color: var(--muted);
-  border-right: var(--rule);
-}
-.view-toggle button:last-child { border-right: none; }
-.view-toggle button:hover { color: var(--accent); background: var(--dim); }
-.view-toggle button[aria-pressed="true"] {
-  background: var(--fg);
-  color: var(--bg);
-}
-
-/* ============================================================
-   EXPERIMENT INDEX — GRID VIEW
-   ============================================================ */
-
-.experiments[data-view="grid"] {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 0;
-  border-bottom: var(--rule);
-}
-
-.experiments[data-view="grid"] .card {
-  display: block;
-  padding: 18px;
-  border-right: var(--rule);
-  border-bottom: var(--rule);
-  position: relative;
-  transition: background 140ms;
-}
-.experiments[data-view="grid"] .card:hover {
-  background: var(--dim);
-}
-.experiments[data-view="grid"] .card:hover .thumb-arrow {
-  transform: translate(4px, -4px);
-  color: var(--accent);
-}
-.experiments[data-view="grid"] .card:hover .meta-title {
-  color: var(--accent);
-}
-
-.experiments[data-view="grid"] .thumb {
-  aspect-ratio: 4 / 3;
-  background: var(--dim);
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 14px;
-  border: var(--rule);
-}
-
-.thumb-arrow {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  font-size: 14px;
-  color: var(--muted);
-  transition: transform 180ms, color 180ms;
-}
-
-.thumb-canvas {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Card meta — single row of metadata, title is the prominent item */
-.experiments[data-view="grid"] .card-meta {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: baseline;
-  gap: 12px;
-  font-size: 11px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-.experiments[data-view="grid"] .meta-num { color: var(--fg); font-weight: 500; }
-.experiments[data-view="grid"] .meta-title {
-  font-size: 16px;
-  font-weight: 500;
-  text-transform: none;
-  letter-spacing: -0.01em;
-  color: var(--fg);
-  transition: color 140ms;
-}
-.experiments[data-view="grid"] .meta-cat { justify-self: end; }
-.experiments[data-view="grid"] .meta-year,
-.experiments[data-view="grid"] .meta-arrow { display: none; }
 
 /* ============================================================
    EXPERIMENT INDEX — LIST VIEW
    ============================================================ */
 
-.experiments[data-view="list"] {
+.experiments {
   border-bottom: var(--rule);
 }
 
-.experiments[data-view="list"] .card {
+.experiments .card {
   display: block;
   border-bottom: var(--rule);
   transition: background 140ms, padding 140ms;
 }
-.experiments[data-view="list"] .card:hover {
+.experiments .card:hover {
   background: var(--dim);
 }
-.experiments[data-view="list"] .card:hover .meta-title {
+.experiments .card:hover .meta-title {
   color: var(--accent);
 }
-.experiments[data-view="list"] .card:hover .meta-arrow {
+.experiments .card:hover .meta-arrow {
   transform: translateX(4px);
   color: var(--accent);
 }
 
-.experiments[data-view="list"] .thumb { display: none; }
-
-.experiments[data-view="list"] .card-meta {
+.experiments .card-meta {
   display: grid;
   grid-template-columns: 80px 1fr 32px;
   align-items: center;
   gap: 24px;
   padding: 18px var(--pad-x);
 }
-.experiments[data-view="list"] .meta-num {
+.experiments .meta-num {
   font-size: 12px;
   color: var(--muted);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
-.experiments[data-view="list"] .meta-title {
+.experiments .meta-title {
   font-size: 22px;
   font-weight: 500;
   letter-spacing: -0.01em;
   color: var(--fg);
   transition: color 140ms;
 }
-.experiments[data-view="list"] .meta-arrow {
+.experiments .meta-arrow {
   font-size: 14px;
   color: var(--muted);
   text-align: right;
   transition: transform 180ms, color 180ms;
 }
 
-.experiments[data-view="list"] .meta-cat { display: none; }
-
 /* Avoid doubled rule above the footer: the main wrapper already draws its
    bottom border, so drop the last card's. */
-.experiments[data-view="list"] .card:last-child { border-bottom: none; }
+.experiments .card:last-child { border-bottom: none; }
 
 @media (max-width: 720px) {
-  .experiments[data-view="list"] .card-meta {
+  .experiments .card-meta {
     grid-template-columns: 60px 1fr 32px;
   }
+  .experiments .meta-title { font-size: 18px; }
 }
-
-.card.is-hidden { display: none !important; }
 
 /* ============================================================
    FOOTER
@@ -376,6 +271,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 
 .crumbs {
   padding: 12px var(--pad-x);
+  min-height: 51px;
   border-bottom: var(--rule);
   font-size: 11px;
   color: var(--muted);
@@ -411,50 +307,6 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .crumb-nav a:hover { border-color: var(--accent); background: var(--dim); color: var(--accent); }
 .crumb-nav a.disabled { opacity: 0.3; pointer-events: none; }
 
-.exp-head {
-  padding: clamp(32px, 6vw, 64px) var(--pad-x);
-  border-bottom: var(--rule);
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: end;
-  gap: 32px;
-}
-
-.exp-num {
-  font-size: clamp(48px, 10vw, 120px);
-  font-weight: 600;
-  line-height: 0.85;
-  letter-spacing: -0.04em;
-  color: var(--accent);
-}
-
-.exp-title {
-  margin: 0;
-  font-size: clamp(32px, 6vw, 72px);
-  font-weight: 500;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-}
-
-.exp-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  text-align: right;
-  font-size: 11px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  min-width: 180px;
-}
-.exp-meta strong { color: var(--fg); font-weight: 500; }
-
-@media (max-width: 720px) {
-  .exp-head { grid-template-columns: 1fr; gap: 16px; }
-  .exp-meta { text-align: left; min-width: 0; }
-}
-
 .exp-stage {
   padding: var(--pad-x);
   border-bottom: var(--rule);
@@ -478,18 +330,6 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   pointer-events: none;
 }
 .exp-stage > * { position: relative; z-index: 1; }
-
-.exp-stage-label {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  font-size: 10px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  z-index: 2;
-}
-.exp-stage-label .ind { color: var(--accent); }
 
 .exp-notes {
   padding: clamp(32px, 5vw, 64px) var(--pad-x);
@@ -576,24 +416,3 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   pointer-events: none;
 }
 
-/* ============================================================
-   UTIL — striped placeholder for thumbnails
-   ============================================================ */
-
-.stripes {
-  background-image: repeating-linear-gradient(
-    -45deg,
-    var(--line) 0 1px,
-    transparent 1px 8px
-  );
-}
-
-.thumb-label {
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
-  font-size: 10px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
