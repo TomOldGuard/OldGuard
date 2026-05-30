@@ -626,8 +626,11 @@
 
   function beginRoar() {
     withRunningCtx(() => {
-      // user may have already lifted before resume() resolved on first tap
-      if (!dragging) return;
+      // iOS first-tap: the context only unlocks on the *completed* gesture
+      // (touchend), so resume() can resolve after the finger has already
+      // lifted. Rather than swallow that first tap, honour it as a one-shot
+      // roar — Ronnie answers the very first touch instead of the second.
+      if (!dragging) { shotRoar(); return; }
       if (liveVoice) liveVoice.release();
       liveVoice = startVoice(S.pitch, S.grit, true);
       S.roaring = true;
