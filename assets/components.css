@@ -1,0 +1,217 @@
+/* ============================================================
+   OLD GUARD / PLaiGROUND — shared component layer (.og-*)
+   ------------------------------------------------------------
+   styles.css owns the page CHROME (header, footer, index, the
+   experiment shell). This file owns the PRIMITIVES that recur
+   INSIDE experiment stages — buttons, labels, stat readouts,
+   sliders, big numbers.
+
+   The rule: compose experiments from these. Only write bespoke
+   CSS for the part that makes an experiment unique (its demo).
+   All tokens (--fg, --bg, --muted, --line, --dim, --accent,
+   --rule, --mono) come from styles.css.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   LABEL — the uppercase micro-caption.
+   One canonical size. Use for field labels, stat captions,
+   meta keys. (Was 9/10/11px @ 0.08–0.14em across experiments.)
+   ------------------------------------------------------------ */
+.og-label {
+  font-size: 10px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------
+   DISPLAY — a big tabular readout number (countdowns, scores).
+   ------------------------------------------------------------ */
+.og-display {
+  font-size: clamp(34px, 7vw, 56px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+.og-display.acc { color: var(--accent); }
+
+/* ------------------------------------------------------------
+   STAT — a label-over-value readout cell, and an optional
+   self-framing hairline grid to hold a row of them.
+   .og-stats frames itself with top+left rules; each .og-stat
+   draws its own right+bottom rule, so the grid stays clean at
+   any column count or wrap with no doubled lines.
+   Set column count with --og-cols (and --og-cols-sm ≤600px).
+   When embedding stats inside an already-bordered panel, use
+   bare .og-stat cells in your own container instead.
+   ------------------------------------------------------------ */
+.og-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 14px 16px;
+}
+.og-stat-val {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+.og-stat-val.acc { color: var(--accent); }
+
+.og-stats {
+  display: grid;
+  grid-template-columns: repeat(var(--og-cols, 2), 1fr);
+  border-top: var(--rule);
+  border-left: var(--rule);
+}
+.og-stats > .og-stat {
+  border-right: var(--rule);
+  border-bottom: var(--rule);
+}
+.og-stats.flush { border-top: none; }
+@media (max-width: 600px) {
+  .og-stats { grid-template-columns: repeat(var(--og-cols-sm, 2), 1fr); }
+}
+
+/* ------------------------------------------------------------
+   BUTTON — the outline action button.
+   Modifiers: --subtle (muted hairline), --sm (compact pill).
+   [aria-pressed="true"] gives a selected state for segmented
+   groups. .og-key is a keycap chip to drop inside a button.
+   ------------------------------------------------------------ */
+.og-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--fg);
+  background: transparent;
+  border: 1px solid var(--fg);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms, color 120ms, border-color 120ms;
+}
+.og-btn:hover { background: var(--dim); color: var(--accent); border-color: var(--accent); }
+.og-btn[aria-pressed="true"] { background: var(--dim); color: var(--accent); border-color: var(--accent); }
+
+.og-btn.subtle { border-color: var(--line); color: var(--muted); }
+.og-btn.subtle:hover { background: var(--dim); border-color: var(--accent); color: var(--accent); }
+
+.og-btn.sm { padding: 6px 10px; font-size: 10px; }
+
+.og-key {
+  border: 1px solid currentColor;
+  padding: 1px 6px;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* an icon sitting inside an .og-btn */
+.og-btn-icon { width: 12px; height: 12px; display: inline-block; flex-shrink: 0; }
+
+/* ------------------------------------------------------------
+   LINK — an inline text link. Coral + 1px underline so a link
+   always reads as a link, in prose or in the chrome. Block/card
+   anchors stay unstyled; reach for this only on real text links.
+   ------------------------------------------------------------ */
+.og-link {
+  color: var(--accent);
+  border-bottom: 1px solid currentColor;
+  transition: opacity 120ms;
+}
+.og-link:hover { opacity: 0.65; }
+
+/* ------------------------------------------------------------
+   CELLBTN — a soft, borderless button that fills a hairline
+   grid cell (mode switches, action rows, preset banks).
+   [aria-pressed="true"] inverts to the solid selected state.
+   Wrap a row in .og-cellbtns for automatic internal dividers.
+   ------------------------------------------------------------ */
+.og-cellbtn {
+  padding: 13px 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: background 120ms, color 120ms;
+}
+.og-cellbtn:hover { background: var(--dim); color: var(--accent); }
+.og-cellbtn[aria-pressed="true"] { background: var(--dim); color: var(--accent); }
+
+.og-cellbtns {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+.og-cellbtns > .og-cellbtn { border-right: var(--rule); }
+.og-cellbtns > .og-cellbtn:last-child { border-right: none; }
+
+/* ------------------------------------------------------------
+   META — a justify-between caption row (prompts, footers).
+   <b> reads as foreground, .acc as coral.
+   ------------------------------------------------------------ */
+.og-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.og-meta b { color: var(--fg); font-weight: 500; }
+.og-meta .acc { color: var(--accent); }
+
+/* ------------------------------------------------------------
+   RANGE — a styled slider. 2px track, coral thumb.
+   ------------------------------------------------------------ */
+.og-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: var(--line);
+  outline: none;
+  cursor: pointer;
+  /* fallback for engines that ignore the custom ::thumb below */
+  accent-color: var(--accent);
+}
+.og-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  cursor: grab;
+}
+.og-range::-webkit-slider-thumb:active { cursor: grabbing; }
+.og-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  cursor: grab;
+}
+.og-range::-moz-range-track { height: 2px; background: var(--line); }

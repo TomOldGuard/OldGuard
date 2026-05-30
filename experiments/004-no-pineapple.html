@@ -10,8 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/components.css">
 <style>
-  /* ---- 004 — Procedural Pizza Generator -------------------------- */
+  /* ---- 002 — Procedural Pizza Generator -------------------------- */
   .pp { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; max-width: 1080px; width: 100%; }
   @media (max-width: 760px) { .pp { grid-template-columns: 1fr; gap: 32px; } }
 
@@ -70,27 +71,7 @@
   .pp-toppings .swatch.bas { background: transparent; border: none; clip-path: polygon(50% 0, 100% 100%, 0 100%); background-color: var(--fg); }
   .pp-toppings .swatch.anc { background: var(--accent); }
 
-  .pp-order {
-    margin-top: 8px;
-    border: 1px solid var(--fg);
-    padding: 12px 14px;
-    font-family: var(--mono);
-    color: var(--fg);
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-    display: flex; justify-content: space-between; align-items: center;
-    transition: background 120ms, color 120ms;
-  }
-  .pp-order:hover { background: var(--dim); color: var(--accent); border-color: var(--accent); }
-  .pp-order .key {
-    border: 1px solid currentColor;
-    padding: 2px 6px;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    font-weight: 500;
-  }
+  .pp-order { margin-top: 8px; justify-content: space-between; }
 
   /* ---- Recall form ---------------------------------------------- */
   .pp-recall {
@@ -184,9 +165,9 @@
       <div class="pp-row"><span class="k">Toppings</span><span class="v"><span class="pp-toppings" id="pp-toppings"></span></span></div>
       <div class="pp-row"><span class="k">Bake</span><span class="v" id="pp-bake">— min @ —°C</span></div>
 
-      <button class="pp-order" id="pp-order">
+      <button class="og-btn pp-order" id="pp-order">
         <span>Generate next pizza</span>
-        <span class="key">→</span>
+        <span class="og-key">&gt;</span>
       </button>
       <form class="pp-recall" id="pp-recall" autocomplete="off">
         <label class="pp-recall-label" for="pp-recall-input">Recall serial</label>

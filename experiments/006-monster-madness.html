@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/components.css">
 <style>
   /* ---- 006 — Monster Madness: split-page monster book ------------ */
   .mm { width: 100%; max-width: 760px; display: grid; gap: 20px; }
@@ -157,45 +158,18 @@
   }
   .mm-synth-bio b { color: var(--fg); font-weight: 500; font-style: italic; }
   .mm-synth-foot {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
     padding-top: 12px;
     margin-top: 4px;
     border-top: 1px dashed var(--line);
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    align-items: center;
   }
-  .mm-synth-foot b { color: var(--accent); font-weight: 500; }
 
   .mm-actions {
     display: flex; gap: 8px; flex-wrap: wrap;
   }
-  .mm-btn {
-    border: 1px solid var(--fg);
-    background: transparent;
-    color: var(--fg);
-    padding: 10px 16px;
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 120ms, color 120ms, border-color 120ms;
-  }
-  .mm-btn:hover { background: var(--dim); color: var(--accent); border-color: var(--accent); }
-  .mm-icon { width: 12px; height: 12px; display: inline-block; flex-shrink: 0; }
   @media (max-width: 600px) {
-    .mm-actions { width: 100%; }
-    .mm-btn { flex: 1; text-align: center; }
+    .mm-toolbar, .mm-actions { width: 100%; }
+    .mm-toolbar .og-btn, .mm-actions .og-btn { flex: 1; text-align: center; }
   }
 </style>
 </head>
@@ -213,8 +187,8 @@
   <div class="mm">
 
     <div class="mm-toolbar">
-      <button class="mm-btn" id="mm-shuffle">
-        <svg class="mm-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <button class="og-btn" id="mm-shuffle">
+        <svg class="og-btn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M1.5 4 L4.5 4 L11 12 L14.5 12"/>
           <path d="M12.5 10 L14.5 12 L12.5 14"/>
           <path d="M1.5 12 L4.5 12 L7 9"/>
@@ -223,7 +197,7 @@
         </svg>
         Shuffle
       </button>
-      <button class="mm-btn" id="mm-reset">Reset</button>
+      <button class="og-btn" id="mm-reset">Reset</button>
     </div>
 
     <div class="mm-book" id="mm-book"></div>
@@ -232,11 +206,11 @@
       <div class="mm-synth-label">Composite specimen</div>
       <div class="mm-synth-name" id="mm-synth-name">— — —</div>
       <div class="mm-synth-bio" id="mm-synth-bio"></div>
-      <div class="mm-synth-foot">
-        <span>Specimen <b id="mm-serial">#000</b></span>
-        <span>Threat <b id="mm-threat">0000</b></span>
-        <span>Habitat <b id="mm-habitat">—</b></span>
-        <span>Year first sighted <b id="mm-year">—</b></span>
+      <div class="mm-synth-foot og-meta">
+        <span>Specimen <b class="acc" id="mm-serial">#000</b></span>
+        <span>Threat <b class="acc" id="mm-threat">0000</b></span>
+        <span>Habitat <b class="acc" id="mm-habitat">—</b></span>
+        <span>Year first sighted <b class="acc" id="mm-year">—</b></span>
       </div>
     </div>
 
@@ -630,7 +604,7 @@
       panel.className = "mm-panel";
       panel.dataset.part = part;
       panel.innerHTML = `
-        <button class="mm-flip left" aria-label="Previous ${PART_LABEL[part]}">←</button>
+        <button class="mm-flip left" aria-label="Previous ${PART_LABEL[part]}">&lt;</button>
         <div class="mm-stage" data-part="${part}">
           <div class="mm-art" data-art-mount></div>
           <div class="mm-info">
@@ -643,7 +617,7 @@
             <div class="mm-source">From <b data-source></b></div>
           </div>
         </div>
-        <button class="mm-flip right" aria-label="Next ${PART_LABEL[part]}">→</button>
+        <button class="mm-flip right" aria-label="Next ${PART_LABEL[part]}">&gt;</button>
       `;
       book.appendChild(panel);
 

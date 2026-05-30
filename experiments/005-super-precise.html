@@ -10,43 +10,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/components.css">
 <style>
   /* ---- 005 — Super precise: a precision-stop game ---------------- */
   .sp { width: 100%; max-width: 960px; display: grid; gap: 24px; }
 
-  .sp-hud {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    border: var(--rule);
-  }
-  @media (max-width: 600px) {
-    .sp-hud { grid-template-columns: repeat(2, 1fr); }
-    .sp-cell:nth-child(2) { border-right: none; }
-    .sp-cell:nth-child(1),
-    .sp-cell:nth-child(2) { border-bottom: var(--rule); }
-  }
-  .sp-cell {
-    padding: 14px 16px;
-    border-right: var(--rule);
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .sp-cell:last-child { border-right: none; }
-  .sp-cell .lbl {
-    font-size: 10px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-  .sp-cell .val {
-    font-size: 22px;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
-  }
-  .sp-cell .val.acc { color: var(--accent); }
+  .og-stat-val.bad { color: var(--muted); }
 
   .sp-target-row {
     display: flex;
@@ -58,23 +27,7 @@
     text-transform: uppercase;
     letter-spacing: 0.12em;
   }
-  .sp-target-row .big {
-    color: var(--accent);
-    font-size: clamp(34px, 7vw, 56px);
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-  .sp-target-row .live {
-    color: var(--fg);
-    font-size: clamp(34px, 7vw, 56px);
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-    transition: color 200ms;
-  }
+  .sp-target-row .live { transition: color 200ms; }
   .sp-target-row.locked .live { color: var(--accent); }
 
   /* ---- the scanner track --------------------------------------- */
@@ -147,57 +100,10 @@
   }
   .sp-scanner.locked::after { color: var(--accent); }
 
-  .sp-prompt {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 16px;
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .sp-prompt b { color: var(--fg); font-weight: 500; }
+  .sp-prompt { margin-top: 16px; align-items: center; }
 
   /* ---- result panel -------------------------------------------- */
-  .sp-result {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    border: var(--rule);
-    border-top: none;
-    background: var(--bg);
-    overflow: hidden;
-  }
   .sp-result.hidden { display: none; }
-  @media (max-width: 600px) {
-    .sp-result { grid-template-columns: repeat(2, 1fr); }
-    .sp-result-cell:nth-child(1),
-    .sp-result-cell:nth-child(2) { border-bottom: var(--rule); }
-    .sp-result-cell:nth-child(2) { border-right: none; }
-  }
-  .sp-result-cell {
-    padding: 14px 16px;
-    border-right: var(--rule);
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .sp-result-cell:last-child { border-right: none; }
-  .sp-result-cell .lbl {
-    font-size: 10px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-  .sp-result-cell .val {
-    font-size: 22px;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-  }
-  .sp-result-cell .val.acc { color: var(--accent); }
-  .sp-result-cell .val.bad { color: var(--muted); }
 
   .sp-actions {
     display: flex;
@@ -207,34 +113,8 @@
   }
   @media (max-width: 600px) {
     .sp-actions { justify-content: stretch; }
-    .sp-actions .sp-btn { flex: 1; justify-content: center; }
+    .sp-actions .og-btn { flex: 1; justify-content: center; }
     .sp-actions .sp-grade { width: 100%; }
-  }
-  .sp-btn {
-    border: 1px solid var(--fg);
-    background: transparent;
-    color: var(--fg);
-    padding: 10px 16px;
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    transition: background 120ms, color 120ms;
-    display: inline-flex; align-items: center; gap: 8px;
-  }
-  .sp-btn:hover { background: var(--dim); color: var(--accent); border-color: var(--accent); }
-  .sp-btn.subtle {
-    border-color: var(--line);
-    color: var(--muted);
-  }
-  .sp-btn.subtle:hover { border-color: var(--accent); background: transparent; color: var(--accent); }
-  .sp-btn .key {
-    border: 1px solid currentColor;
-    padding: 1px 6px;
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    font-weight: 500;
   }
 
   /* ---- end-of-run summary -------------------------------------- */
@@ -313,7 +193,7 @@
     flex-wrap: wrap;
   }
   @media (max-width: 600px) {
-    .sp-summary-actions .sp-btn { flex: 1; justify-content: center; }
+    .sp-summary-actions .og-btn { flex: 1; justify-content: center; }
   }
 
   .sp-grade {
@@ -338,21 +218,21 @@
 <section class="exp-stage" data-screen-label="005 Superprecise">
   <div class="sp">
 
-    <div class="sp-hud">
-      <div class="sp-cell"><span class="lbl">Round</span><span class="val" id="sp-round">1 / 5</span></div>
-      <div class="sp-cell"><span class="lbl">Score</span><span class="val acc" id="sp-score">0000</span></div>
-      <div class="sp-cell"><span class="lbl">Last delta</span><span class="val" id="sp-last">—</span></div>
-      <div class="sp-cell"><span class="lbl">Best ever</span><span class="val" id="sp-best">—</span></div>
+    <div class="og-stats" style="--og-cols:4; --og-cols-sm:2">
+      <div class="og-stat"><span class="og-label">Round</span><span class="og-stat-val" id="sp-round">1 / 5</span></div>
+      <div class="og-stat"><span class="og-label">Score</span><span class="og-stat-val acc" id="sp-score">0000</span></div>
+      <div class="og-stat"><span class="og-label">Last delta</span><span class="og-stat-val" id="sp-last">—</span></div>
+      <div class="og-stat"><span class="og-label">Best ever</span><span class="og-stat-val" id="sp-best">—</span></div>
     </div>
 
     <div class="sp-target-row" id="sp-target-row">
       <div>
         <div>Target</div>
-        <div class="big" id="sp-target-val">50.00</div>
+        <div class="big og-display acc" id="sp-target-val">50.00</div>
       </div>
       <div style="text-align:right">
         <div>Reading</div>
-        <div class="live" id="sp-live">00.00</div>
+        <div class="live og-display" id="sp-live">00.00</div>
       </div>
     </div>
 
@@ -362,27 +242,27 @@
         <div class="sp-target-line" id="sp-target-line"></div>
         <div class="sp-scanner" id="sp-scanner"></div>
       </div>
-      <div class="sp-prompt">
+      <div class="sp-prompt og-meta">
         <span>Stop the scanner exactly on the target.</span>
         <span>Tap the track or press <b>SPACE</b> to lock</span>
       </div>
     </div>
 
-    <div class="sp-result hidden" id="sp-result">
-      <div class="sp-result-cell"><span class="lbl">You stopped at</span><span class="val" id="sp-r-stop">—</span></div>
-      <div class="sp-result-cell"><span class="lbl">Delta</span><span class="val" id="sp-r-delta">—</span></div>
-      <div class="sp-result-cell"><span class="lbl">Points</span><span class="val acc" id="sp-r-points">—</span></div>
-      <div class="sp-result-cell">
-        <span class="lbl">Grade</span>
-        <span class="val" id="sp-r-grade">—</span>
+    <div class="sp-result og-stats flush hidden" id="sp-result" style="--og-cols:4; --og-cols-sm:2">
+      <div class="og-stat"><span class="og-label">You stopped at</span><span class="og-stat-val" id="sp-r-stop">—</span></div>
+      <div class="og-stat"><span class="og-label">Delta</span><span class="og-stat-val" id="sp-r-delta">—</span></div>
+      <div class="og-stat"><span class="og-label">Points</span><span class="og-stat-val acc" id="sp-r-points">—</span></div>
+      <div class="og-stat">
+        <span class="og-label">Grade</span>
+        <span class="og-stat-val" id="sp-r-grade">—</span>
       </div>
     </div>
 
     <div class="sp-actions">
       <span class="sp-grade" id="sp-status">Round 1 — sweep speed <b>SLOW</b></span>
       <div style="flex:1"></div>
-      <button class="sp-btn subtle" id="sp-reset">Reset</button>
-      <button class="sp-btn" id="sp-next">Next round</button>
+      <button class="og-btn subtle" id="sp-reset">Reset</button>
+      <button class="og-btn" id="sp-next">Next round</button>
     </div>
 
     <div class="sp-summary hidden" id="sp-summary">
@@ -405,8 +285,8 @@
         </div>
       </div>
       <div class="sp-summary-actions">
-        <button class="sp-btn" id="sp-again">Play again</button>
-        <a class="sp-btn subtle" href="../index.html">Back to index</a>
+        <button class="og-btn" id="sp-again">Play again</button>
+        <a class="og-btn subtle" href="../index.html">Back to index</a>
       </div>
     </div>
 

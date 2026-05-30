@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/components.css">
 <style>
   /* ---- 008 — Nakagin Capsule Tower: free iso stacking sandbox ---- */
   .nk {
@@ -67,24 +68,8 @@
   .nk-side { display: flex; flex-direction: column; }
 
   .nk-modes {
-    display: flex;
     border-bottom: var(--rule);
   }
-  .nk-modes button {
-    flex: 1;
-    padding: 13px 8px;
-    border-right: var(--rule);
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    cursor: pointer;
-    transition: background 120ms, color 120ms;
-  }
-  .nk-modes button:last-child { border-right: none; }
-  .nk-modes button:hover { background: var(--dim); color: var(--accent); }
-  .nk-modes button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
 
   .nk-rack {
     display: flex;
@@ -130,34 +115,8 @@
     gap: 3px;
   }
   .nk-stats .cell:last-child { border-right: none; }
-  .nk-stats .lbl {
-    font-size: 9px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-  .nk-stats .val {
-    font-size: 22px;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
-  }
-  .nk-stats .val.acc { color: var(--accent); }
 
-  .nk-actions { display: grid; grid-template-columns: 1fr 1fr; }
-  .nk-actions button {
-    padding: 13px 8px;
-    border-right: var(--rule);
-    font-family: var(--mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    cursor: pointer;
-    transition: background 120ms, color 120ms;
-  }
   .nk-actions button:last-child { border-right: none; }
-  .nk-actions button:hover { background: var(--dim); color: var(--accent); }
 </style>
 </head>
 <body>
@@ -178,9 +137,9 @@
     </div>
 
     <aside class="nk-side">
-      <div class="nk-modes" id="nk-modes">
-        <button data-mode="add" aria-pressed="true">Add</button>
-        <button data-mode="remove" aria-pressed="false">Remove</button>
+      <div class="nk-modes og-cellbtns" id="nk-modes">
+        <button class="og-cellbtn" data-mode="add" aria-pressed="true">Add</button>
+        <button class="og-cellbtn" data-mode="remove" aria-pressed="false">Remove</button>
       </div>
 
       <div class="nk-rack">
@@ -193,13 +152,13 @@
       </div>
 
       <div class="nk-stats">
-        <div class="cell"><span class="lbl">Capsules</span><span class="val acc" id="nk-count">0</span></div>
-        <div class="cell"><span class="lbl">Tallest</span><span class="val" id="nk-tall">0</span></div>
+        <div class="cell"><span class="og-label">Capsules</span><span class="og-stat-val acc" id="nk-count">0</span></div>
+        <div class="cell"><span class="og-label">Tallest</span><span class="og-stat-val" id="nk-tall">0</span></div>
       </div>
 
-      <div class="nk-actions">
-        <button id="nk-random">Randomize</button>
-        <button id="nk-clear">Clear</button>
+      <div class="nk-actions og-cellbtns">
+        <button class="og-cellbtn" id="nk-random">Randomize</button>
+        <button class="og-cellbtn" id="nk-clear">Clear</button>
       </div>
     </aside>
 

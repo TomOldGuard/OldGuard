@@ -105,7 +105,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   font-size: 12px;
   transition: border-color 120ms, color 120ms;
 }
-.icon-btn:hover { border-color: var(--accent); background: var(--dim); color: var(--accent); }
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
 
 .theme-toggle {
   border: none;
@@ -230,6 +230,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   .experiments .card-meta {
     grid-template-columns: 60px 1fr 32px;
   }
+  /* Scale the index titles down a touch on small screens (desktop stays 22px). */
   .experiments .meta-title { font-size: 18px; }
 }
 
@@ -254,10 +255,11 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   color: var(--muted);
 }
 .site-footer .footer-link {
-  color: var(--muted);
-  transition: color 140ms;
+  color: var(--accent);
+  border-bottom: 1px solid currentColor;
+  transition: opacity 140ms;
 }
-.site-footer .footer-link:hover { color: var(--accent); }
+.site-footer .footer-link:hover { opacity: 0.65; }
 .site-footer .right { text-align: right; }
 
 @media (max-width: 720px) {
@@ -271,6 +273,8 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 
 .crumbs {
   padding: 12px var(--pad-x);
+  /* Match the experiment-page bar height: there the injected prev/next
+     arrows (26px) make it 51px tall — keep it constant on every page. */
   min-height: 51px;
   border-bottom: var(--rule);
   font-size: 11px;
@@ -298,7 +302,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: var(--rule);
+  border: 1px solid var(--fg);
   font-size: 13px;
   line-height: 1;
   color: var(--muted);
@@ -415,4 +419,3 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   opacity: 0.3;
   pointer-events: none;
 }
-

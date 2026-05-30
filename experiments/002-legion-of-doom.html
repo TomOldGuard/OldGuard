@@ -10,8 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/components.css">
 <style>
-  /* ---- 002 — Legion of Doom: procedural villain roster ----------- */
+  /* ---- 004 — Legion of Doom: procedural villain roster ----------- */
   .lod { width: 100%; max-width: 1080px; }
 
   .lod-toolbar {
@@ -21,24 +22,6 @@
     flex-wrap: wrap;
     justify-content: flex-end;
   }
-  .lod-btn {
-    border: 1px solid var(--fg);
-    color: var(--fg);
-    background: transparent;
-    padding: 10px 14px;
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 120ms, color 120ms;
-  }
-  .lod-btn:hover { background: var(--dim); color: var(--accent); border-color: var(--accent); }
-  .lod-icon { width: 12px; height: 12px; display: inline-block; flex-shrink: 0; }
   @media (max-width: 600px) {
     .lod-toolbar { width: 100%; }
     .lod-btn { flex: 1; text-align: center; }
@@ -120,15 +103,7 @@
   .lod-status[data-status="DORMANT"]    b { color: var(--muted); }
   .lod-status[data-status="CLASSIFIED"] b { color: var(--fg); }
 
-  .lod-footer {
-    display: flex; justify-content: space-between;
-    font-size: 10px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding-top: 14px;
-  }
-  .lod-footer b { color: var(--accent); }
+  .lod-footer { padding-top: 14px; }
 </style>
 </head>
 <body>
@@ -144,8 +119,8 @@
 <section class="exp-stage" data-screen-label="002 Legion of Doom">
   <div class="lod">
     <div class="lod-toolbar">
-      <button class="lod-btn" id="lod-shuffle">
-        <svg class="lod-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <button class="og-btn lod-btn" id="lod-shuffle">
+        <svg class="og-btn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M1.5 4 L4.5 4 L11 12 L14.5 12"/>
           <path d="M12.5 10 L14.5 12 L12.5 14"/>
           <path d="M1.5 12 L4.5 12 L7 9"/>
@@ -154,14 +129,14 @@
         </svg>
         Shuffle
       </button>
-      <button class="lod-btn" id="lod-draft">Draft new legion</button>
+      <button class="og-btn lod-btn" id="lod-draft">Draft new legion</button>
     </div>
 
     <div class="lod-grid" id="lod-grid" aria-live="polite"></div>
 
-    <div class="lod-footer">
-      <span>Seed · <b id="lod-seed">000000</b></span>
-      <span>Generation · <b id="lod-gen">001</b></span>
+    <div class="lod-footer og-meta">
+      <span>Seed &middot; <b class="acc" id="lod-seed">000000</b></span>
+      <span>Generation &middot; <b class="acc" id="lod-gen">001</b></span>
     </div>
   </div>
 </section>

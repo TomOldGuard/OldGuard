@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Design system — Old Guard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<meta name="description" content="The Old Guard design system — tokens, type, layout and the shared component primitives, rendered live.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/components.css">
+<style>
+  /* Reference-page scaffold — borrows the colophon's two-column row:
+     the section name sits in the left column, the live render at right.
+     Every row's bottom rule spans the full page width. */
+  .ref-row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 40px;
+    align-items: start;
+    padding: clamp(28px, 4vw, 44px) var(--pad-x);
+    border-bottom: var(--rule);
+  }
+  .ref-head { position: sticky; top: 90px; }
+  .ref-head .idx {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .ref-name {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 500;
+    color: var(--fg);
+    margin-bottom: 10px;
+  }
+  .ref-desc {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .ref-desc code { color: var(--fg); font-size: 0.95em; }
+
+  /* the lead row reads as the page intro — larger prose, no sticky */
+  .ref-row.lead .ref-head { position: static; }
+  .ref-lede {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--fg);
+    text-wrap: pretty;
+    max-width: 60ch;
+    margin: 0;
+  }
+  .ref-lede b { color: var(--fg); font-weight: 500; }
+  .ref-lede code { color: var(--accent); font-size: 0.92em; }
+
+  /* the live demo column + its stacked specimens */
+  .ref-demo { display: grid; gap: 20px; min-width: 0; }
+  .ref-specimen { display: grid; gap: 10px; }
+  .ref-specimen > .ref-cap {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+  }
+  .ref-cluster { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+  @media (max-width: 720px) {
+    .ref-row { grid-template-columns: 1fr; gap: 16px; }
+    .ref-head { position: static; }
+  }
+
+  /* swatch grid for the colour tokens */
+  .ref-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    border-top: var(--rule);
+    border-left: var(--rule);
+  }
+  .ref-swatch {
+    border-right: var(--rule);
+    border-bottom: var(--rule);
+  }
+  .ref-swatch .chip { height: 56px; border-bottom: var(--rule); }
+  .ref-swatch .meta { padding: 8px 10px; display: grid; gap: 2px; }
+  .ref-swatch .tok { font-size: 11px; color: var(--fg); font-weight: 500; }
+  .ref-swatch .hex { font-size: 10px; color: var(--muted); letter-spacing: 0.04em; }
+
+  /* type scale ladder */
+  .ref-scale { display: grid; gap: 0; border-top: var(--rule); }
+  .ref-scale-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 18px 0;
+    border-bottom: var(--rule);
+  }
+  .ref-scale-row:last-child { border-bottom: none; }
+  .ref-scale-sample { color: var(--fg); }
+  .ref-scale-meta {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+  .ref-scale-meta b { color: var(--accent); font-weight: 500; }
+
+  .s-display { font-size: clamp(34px, 7vw, 56px); font-weight: 500; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .s-title   { font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+  .s-body    { font-size: 15px; font-weight: 400; line-height: 1.6; max-width: 56ch; }
+  .s-label   { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
+
+  /* the hero specimen reuses the real .intro h1, minus the page-level padding */
+  .ref-demo .intro { padding: 0; border: none; }
+
+  /* weight specimens */
+  .ref-weights {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    border-top: var(--rule);
+    border-left: var(--rule);
+  }
+  .ref-weight {
+    border-right: var(--rule);
+    border-bottom: var(--rule);
+    padding: 16px;
+    display: grid;
+    gap: 8px;
+  }
+  .ref-weight .glyph { font-size: 30px; line-height: 1; }
+  .ref-weight .wname { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
+  .w300 { font-weight: 300; } .w400 { font-weight: 400; }
+  .w500 { font-weight: 500; } .w600 { font-weight: 600; }
+
+  /* layout demos */
+  .ref-rule-demo { display: grid; gap: 14px; }
+  .ref-hairline { border-top: var(--rule); }
+  .ref-grid-demo {
+    height: 120px;
+    border: var(--rule);
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 100% 40px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 40px 100%,
+      var(--bg);
+  }
+  .ref-tokens {
+    display: grid;
+    border-top: var(--rule);
+    border-left: var(--rule);
+  }
+  .ref-token-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 16px;
+    padding: 12px 16px;
+    border-right: var(--rule);
+    border-bottom: var(--rule);
+    align-items: baseline;
+    font-size: 12px;
+  }
+  .ref-token-row .k {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .ref-token-row .v { color: var(--fg); }
+  @media (max-width: 720px) {
+    .ref-token-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  /* notes list (motion + voice) */
+  .ref-notes { display: grid; gap: 16px; }
+  .ref-note { display: grid; gap: 4px; max-width: 60ch; }
+  .ref-note .nk {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+  }
+  .ref-note p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--fg); text-wrap: pretty; }
+  .ref-note p b { color: var(--fg); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<header class="site-header" data-header></header>
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="index.html">Index</a>
+  <span>/</span>
+  <span class="here">Design system</span>
+</nav>
+
+<section data-screen-label="Design system">
+
+  <!-- OVERVIEW (lead) ------------------------------------------------ -->
+  <div class="ref-row lead">
+    <div class="ref-head">
+      <div class="ref-name"><span class="idx">00</span> Design system</div>
+    </div>
+    <div class="ref-demo">
+      <p class="ref-lede">The whole system in one place, rendered live — the <b>foundations</b> (colour, type, layout) and the <b>component primitives</b> that build every experiment. <code>styles.css</code> owns the page chrome and tokens; <code>components.css</code> owns the shared <code>.og-*</code> layer. Compose experiments from these and write bespoke CSS only for the part that makes a demo unique. If anything here looks off, the whole index drifts — so this page is also the drift check.</p>
+    </div>
+  </div>
+
+  <!-- COLOUR --------------------------------------------------------- -->
+  <div class="ref-row">
+    <div class="ref-head">
+      <div class="ref-name"><span class="idx">01</span> Colour</div>
+      <div class="ref-desc">Six tokens, defined in <code>:root</code> and flipped wholesale by <code>[data-theme]</code>. Toggle the half-circle in the header to watch them invert. Coral is the one constant across both themes.</div>
+    </div>
+    <div class="ref-demo">
+      <div class="ref-swatches" id="ref-swatches"></div>
+    </div>
+  </div>
+
+  <!-- TYPE ----------------------------------------------------------- -->
+  <div class="ref-row">
+    <div class="ref-head">
+      <div class="ref-name"><span class="idx">02</span> Type</div>
+      <div class="ref-desc">One typeface — <code>JetBrains Mono</code> — in four weights. Weight and size do the work; there is no second family. Labels go UPPERCASE with wide tracking.</div>
+    </div>
+    <div class="ref-demo">
+      <div class="ref-specimen">
+        <span class="ref-cap">Page title · .intro h1 — .accent / .lower</span>
+        <div class="intro">
+          <h1>Old <span class="accent">Guard</span><span class="lower">a public sandbox of experiments</span></h1>
+        </div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">Weights · 300 / 400 / 500 / 600</span>
+        <div class="ref-weights">
+          <div class="ref-weight"><span class="glyph w300">Aa</span><span class="wname">300 Light</span></div>
+          <div class="ref-weight"><span class="glyph w400">Aa</span><span class="wname">400 Regular</span></div>
+          <div class="ref-weight"><span class="glyph w500">Aa</span><span class="wname">500 Medium</span></div>
+          <div class="ref-weight"><span class="glyph w600">Aa</span><span class="wname">600 Semibold</span></div>
+        </div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">Scale</span>
+        <div class="ref-scale">
+          <div class="ref-scale-row">
+            <div class="ref-scale-sample s-display">128</div>
+            <div class="ref-scale-meta">Display &middot; <b>clamp(34 – 56px)</b> &middot; 500 &middot; tabular &middot; <code>.og-display</code> &middot; <code>.acc</code> coral</div>
+          </div>
+          <div class="ref-scale-row">
+            <div class="ref-scale-sample s-title">Notice period</div>
+            <div class="ref-scale-meta">Title &middot; <b>22px</b> &middot; 500 &middot; −0.01em</div>
+          </div>
+          <div class="ref-scale-row">
+            <div class="ref-scale-sample s-body">A countdown that doesn't know what it's counting down to. The notice was given when the page loaded; the period is whatever you choose.</div>
+            <div class="ref-scale-meta">Body &middot; <b>15px</b> &middot; 400 &middot; 1.6 &middot; <code>--fg</code></div>
+          </div>
+          <div class="ref-scale-row">
+            <div class="ref-scale-sample s-label">Days remaining</div>
+            <div class="ref-scale-meta">Label &middot; <b>10px</b> &middot; 0.12em &middot; <code>.og-label</code></div>
+          </div>
+        </div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">Inline link &middot; <code>.og-link</code></span>
+        <div class="s-body">Body copy reads in <code>--fg</code>; a real link, like <a class="og-link" href="colophon.html">the colophon</a>, turns coral and underlines so it's unmistakable.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYOUT --------------------------------------------------------- -->
+  <div class="ref-row">
+    <div class="ref-head">
+      <div class="ref-name"><span class="idx">03</span> Layout &amp; rules</div>
+      <div class="ref-desc">A structured grid drawn in 1px hairlines, generous whitespace, content capped at a fixed width on a seamless surround. The experiment stage carries a faint 40px grid.</div>
+    </div>
+    <div class="ref-demo">
+      <div class="ref-specimen">
+        <span class="ref-cap">1px hairline &middot; var(--rule)</span>
+        <div class="ref-rule-demo"><div class="ref-hairline"></div></div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">Stage grid &middot; 40px</span>
+        <div class="ref-grid-demo"></div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">Tokens</span>
+        <div class="ref-tokens">
+          <div class="ref-token-row"><span class="k">Site cap</span><span class="v">1300px &middot; <code>--site-max</code></span></div>
+          <div class="ref-token-row"><span class="k">Gutter</span><span class="v">clamp(16 – 40px) &middot; <code>--pad-x</code></span></div>
+          <div class="ref-token-row"><span class="k">Hairline</span><span class="v">1px solid var(--line) &middot; <code>--rule</code></span></div>
+          <div class="ref-token-row"><span class="k">Rhythm</span><span class="v">8 / 12 / 16 / 24px gaps</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUTTONS -------------------------------------------------------- -->
+  <div class="ref-row">
+    <div class="ref-head">
+      <div class="ref-name"><span class="idx">04</span> Buttons</div>
+      <div class="ref-desc"><code>.og-btn</code> — the outline action button. <code>.subtle</code> drops to a muted hairline, <code>.sm</code> is the compact pill, <code>[aria-pressed]</code> is the selected state, and <code>.og-key</code> is a keycap chip.</div>
+    </div>
+    <div class="ref-demo">
+      <div class="ref-specimen">
+        <span class="ref-cap">.og-btn — default / subtle</span>
+        <div class="ref-cluster">
+          <button class="og-btn">Draft new legion</button>
+          <button class="og-btn subtle">Reset</button>
+        </div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">.og-btn with .og-key chip</span>
+        <div class="ref-cluster">
+          <button class="og-btn">Generate next <span class="og-key">&gt;</span></button>
+          <button class="og-btn">Lock <span class="og-key">SPACE</span></button>
+        </div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">.og-btn with .og-btn-icon</span>
+        <div class="ref-cluster">
+          <button class="og-btn"><span class="og-btn-icon" aria-hidden="true"><svg viewBox="0 0 12 12" width="12" height="12"><rect x="1.4" y="1.4" width="9.2" height="9.2" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></span> Export frame</button>
+          <button class="og-btn subtle"><span class="og-btn-icon" aria-hidden="true"><svg viewBox="0 0 12 12" width="12" height="12"><circle cx="6" cy="6" r="4.6" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></span> Settings</button>
+        </div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">.og-btn.sm + [aria-pressed] (segmented)</span>
+        <div class="ref-cluster" id="ref-seg">
+          <button class="og-btn sm" aria-pressed="true">5M</button>
+          <button class="og-btn sm" aria-pressed="false">1H</button>
+          <button class="og-btn sm" aria-pressed="false">1D</button>
+          <button class="og-btn sm" aria-pressed="false">1W</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CELLBTNS ------------------------------------------------------- -->
+  <div class="ref-row">
+    <div class="ref-head">
+      <div class="ref-name"><span class="idx">05</span> Cell buttons</div>
+      <div class="ref-desc"><code>.og-cellbtn</code> — a soft, borderless button that fills a hairline grid cell. Wrap a row in <code>.og-cellbtns</code> for automatic dividers. <code>[aria-pressed]</code> inverts to the solid selected state.</div>
+    </div>
+    <div class="ref-demo">
+      <div class="ref-specimen">
+        <span class="ref-cap">.og-cellbtns — mode switch</span>
+        <div style="border:var(--rule)">
+          <div class="og-cellbtns" id="ref-modes">
+            <button class="og-cellbtn" aria-pressed="true">Add</button>
+            <button class="og-cellbtn" aria-pressed="false">Remove</button>
+          </div>
+        </div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">.og-cellbtns — action row</span>
+        <div style="border:var(--rule)">
+          <div class="og-cellbtns">
+            <button class="og-cellbtn">Randomize</button>
+            <button class="og-cellbtn">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS ---------------------------------------------------------- -->
+  <div class="ref-row">
+    <div class="ref-head">
+      <div class="ref-name"><span class="idx">06</span> Stat readout</div>
+      <div class="ref-desc"><code>.og-stat</code> is a label-over-value cell. <code>.og-stats</code> frames a self-dividing hairline grid of them — set columns with <code>--og-cols</code>. <code>.og-stat-val.acc</code> turns a value coral; <code>.flush</code> drops the top rule when a grid stacks beneath another bordered block.</div>
+    </div>
+    <div class="ref-demo">
+      <div class="ref-specimen">
+        <span class="ref-cap">.og-stats (--og-cols: 4)</span>
+        <div class="og-stats" style="--og-cols:4; --og-cols-sm:2">
+          <div class="og-stat"><span class="og-label">Round</span><span class="og-stat-val">1 / 5</span></div>
+          <div class="og-stat"><span class="og-label">Score</span><span class="og-stat-val acc">1240</span></div>
+          <div class="og-stat"><span class="og-label">Last delta</span><span class="og-stat-val">&plusmn; 0.40</span></div>
+          <div class="og-stat"><span class="og-label">Best ever</span><span class="og-stat-val">1980</span></div>
+        </div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">.og-stats (--og-cols: 2)</span>
+        <div class="og-stats" style="--og-cols:2">
+          <div class="og-stat"><span class="og-label">Capsules</span><span class="og-stat-val acc">24</span></div>
+          <div class="og-stat"><span class="og-label">Tallest</span><span class="og-stat-val">6</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- META + RANGE --------------------------------------------------- -->
+  <div class="ref-row">
+    <div class="ref-head">
+      <div class="ref-name"><span class="idx">07</span> Meta &amp; range</div>
+      <div class="ref-desc"><code>.og-meta</code> is the justify-between caption row — <code>&lt;b&gt;</code> reads foreground, <code>.acc</code> coral. <code>.og-range</code> is the styled slider.</div>
+    </div>
+    <div class="ref-demo">
+      <div class="ref-specimen">
+        <span class="ref-cap">.og-meta</span>
+        <div class="og-meta">
+          <span>Seed &middot; <b>014920</b></span>
+          <span>Generation &middot; <span class="acc">003</span></span>
+        </div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">.og-range</span>
+        <input class="og-range" type="range" min="0" max="100" value="45" aria-label="Sample range">
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION ----------------------------------------------------- -->
+  <div class="ref-row">
+    <div class="ref-head">
+      <div class="ref-name"><span class="idx">08</span> Navigation</div>
+      <div class="ref-desc">The chrome that carries you between pages. <code>.crumbs</code> is the breadcrumb bar; <code>.crumb-nav</code> mirrors prev / next as square chips — a 1px <code>--fg</code> border to match <code>.og-btn</code>. <code>.icon-btn</code> is the header utility chip. <code>.exp-nav</code> is the full-width prev / next that closes every experiment page.</div>
+    </div>
+    <div class="ref-demo">
+      <div class="ref-specimen">
+        <span class="ref-cap">.crumbs + .crumb-nav</span>
+        <nav class="crumbs" style="border:var(--rule)">
+          <a href="#">Index</a><span>/</span><span class="here">Design system</span>
+          <span class="crumb-nav">
+            <a href="#" aria-label="Previous experiment">&lt;</a>
+            <a href="#" aria-label="Next experiment">&gt;</a>
+          </span>
+        </nav>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">.icon-btn</span>
+        <div class="ref-cluster">
+          <button class="icon-btn" aria-label="Sample icon button">
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 2 A6 6 0 0 1 8 14 Z" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="ref-specimen">
+        <span class="ref-cap">.exp-nav</span>
+        <div class="exp-nav" style="border:var(--rule)">
+          <a class="prev" href="#"><span class="nav-dir">&lt; Previous · 006</span><span class="nav-title">Monster madness</span></a>
+          <a class="next" href="#"><span class="nav-dir">Next · 008 &gt;</span><span class="nav-title">Onigiri</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INDEX CARD ----------------------------------------------------- -->
+  <div class="ref-row">
+    <div class="ref-head">
+      <div class="ref-name"><span class="idx">09</span> Index card</div>
+      <div class="ref-desc">The index list row — <code>.experiments .card</code> wrapping a <code>.card-meta</code> grid of number / title / arrow. Hover lifts the title and arrow to coral and nudges the arrow right; rows divide themselves with hairlines.</div>
+    </div>
+    <div class="ref-demo">
+      <div class="ref-specimen">
+        <span class="ref-cap">.experiments .card · hover a row</span>
+        <div class="experiments" style="border-top:var(--rule)">
+          <a class="card" href="#"><div class="card-meta"><span class="meta-num">004</span><span class="meta-title">No pineapple</span><span class="meta-arrow">&gt;</span></div></a>
+          <a class="card" href="#"><div class="card-meta"><span class="meta-num">005</span><span class="meta-title">Monster madness</span><span class="meta-arrow">&gt;</span></div></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOTION + VOICE ------------------------------------------------- -->
+  <div class="ref-row">
+    <div class="ref-head">
+      <div class="ref-name"><span class="idx">10</span> Motion &amp; voice</div>
+      <div class="ref-desc">The connective character of the system beyond what you can swatch — how things move and how they read.</div>
+    </div>
+    <div class="ref-demo">
+      <div class="ref-notes">
+        <div class="ref-note">
+          <span class="nk">Motion</span>
+          <p>Subtle hover states only — <b>120–200ms</b> transitions, a small offset shift, an accent reveal. Hover any button above to feel it. Real movement lives in the experiment demos, not the chrome.</p>
+        </div>
+        <div class="ref-note">
+          <span class="nk">Voice</span>
+          <p>Minimal, experimental, design-forward, playful, precise. It belongs on the internet of ideas, not a template. Avoid AI-slop tropes — gradients, rounded-corner-plus-left-accent cards, stray emoji.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<footer class="site-footer" data-footer></footer>
+
+<script src="assets/experiments.js"></script>
+<script src="assets/chrome.js"></script>
+<script>
+  OG.renderHeader();
+  OG.renderFooter();
+
+  // Make the demo segmented controls actually toggle, so the page
+  // doubles as a behaviour check, not just a static swatch sheet.
+  function wireSegment(id) {
+    const group = document.getElementById(id);
+    if (!group) return;
+    group.addEventListener("click", (e) => {
+      const b = e.target.closest("button");
+      if (!b) return;
+      group.querySelectorAll("button").forEach(x =>
+        x.setAttribute("aria-pressed", String(x === b)));
+    });
+  }
+  wireSegment("ref-seg");
+  wireSegment("ref-modes");
+
+  // Render the colour tokens live from the cascade so the hexes are
+  // always whatever the stylesheet actually resolves to.
+  const TOKENS = [
+    ["--bg", "Background"],
+    ["--fg", "Foreground"],
+    ["--muted", "Muted"],
+    ["--dim", "Dim fill"],
+    ["--line", "Hairline"],
+    ["--accent", "Accent"]
+  ];
+  function renderSwatches() {
+    const cs = getComputedStyle(document.documentElement);
+    document.getElementById("ref-swatches").innerHTML = TOKENS.map(([tok, name]) => {
+      const val = cs.getPropertyValue(tok).trim();
+      return `<div class="ref-swatch">
+        <div class="chip" style="background:var(${tok})"></div>
+        <div class="meta">
+          <span class="tok">${tok}</span>
+          <span class="hex">${name} &middot; ${val}</span>
+        </div>
+      </div>`;
+    }).join("");
+  }
+  renderSwatches();
+  // re-read after a theme flip
+  const root = document.documentElement;
+  new MutationObserver(renderSwatches).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+</script>
+
+</body>
+</html>

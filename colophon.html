@@ -13,15 +13,17 @@
 <link rel="stylesheet" href="assets/styles.css">
 <style>
   /* Body — each section is a row: title in the left column, copy at right.
-     Mirrors the notes area on experiment pages. */
-  .col-body { padding-top: clamp(20px, 3vw, 40px); border-bottom: var(--rule); }
+     Mirrors the reference page: every row draws its own full-width bottom
+     rule, and the first row sits flush under the crumbs (no extra offset). */
+  .col-body {}
 
   .col-row {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 220px 1fr;
     gap: 40px;
     align-items: start;
-    padding: clamp(28px, 4vw, 48px) var(--pad-x);
+    padding: clamp(28px, 4vw, 44px) var(--pad-x);
+    border-bottom: var(--rule);
   }
 
   .col-label {
@@ -32,7 +34,7 @@
     text-transform: uppercase;
     letter-spacing: 0.12em;
     font-weight: 500;
-    color: var(--muted);
+    color: var(--fg);
   }
   .col-label .idx {
     color: var(--accent);
@@ -127,6 +129,7 @@
           <div class="col-grid-row"><span class="k">Palette</span><span class="v">Black, white, and a single accent <span style="color:var(--accent)">#ED6E5D</span></span></div>
           <div class="col-grid-row"><span class="k">Built with</span><span class="v">Tom Johnson + Claude</span></div>
           <div class="col-grid-row"><span class="k">Source</span><span class="v">Single registry · adding an experiment is one entry + one HTML file</span></div>
+          <div class="col-grid-row"><span class="k">Design system</span><span class="v"><a href="design-system.html">Live reference</a> — tokens, type, layout &amp; the <span style="color:var(--accent)">.og-*</span> component layer</span></div>
         </div>
       </div>
     </div>

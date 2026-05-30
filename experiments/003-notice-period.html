@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/components.css">
 <style>
   .np-wrap { width: 100%; max-width: 760px; display: grid; gap: 18px; }
   .np-row {
@@ -17,18 +18,10 @@
     align-items: baseline; gap: 16px;
     padding-bottom: 12px; border-bottom: var(--rule);
   }
-  .np-label {
-    font-size: 11px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.12em;
-  }
   .np-val {
     font-size: clamp(48px, 9vw, 96px);
-    font-weight: 500; line-height: 1;
     letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
-    color: var(--fg);
   }
-  .np-val.accent { color: var(--accent); }
   .np-unit {
     font-size: 14px; color: var(--muted);
     text-transform: uppercase; letter-spacing: 0.1em;
@@ -39,19 +32,12 @@
 
   .np-footnote {
     display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px; font-size: 11px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.1em;
+    gap: 16px;
     margin-top: 12px;
   }
   .np-footnote b { color: var(--fg); font-weight: 500; }
   .np-footnote .right { text-align: right; }
   .np-controls { display:flex; gap: 6px; margin-top: 4px; }
-  .np-control {
-    padding: 6px 10px; border: var(--rule); font-size: 10px;
-    color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
-    transition: color 120ms, border-color 120ms;
-  }
-  .np-control:hover, .np-control[aria-pressed="true"] { background: var(--dim); color: var(--accent); border-color: var(--accent); }
 
   @media (max-width: 640px) {
     .np-footnote { grid-template-columns: 1fr; }
@@ -72,39 +58,39 @@
 <section class="exp-stage" data-screen-label="003 Notice period">
   <div class="np-wrap" id="np">
     <div class="np-row">
-      <span class="np-label">Days remaining</span>
-      <span class="np-val" id="np-d">000</span>
+      <span class="np-label og-label">Days remaining</span>
+      <span class="np-val og-display" id="np-d">000</span>
       <span class="np-unit">d</span>
     </div>
     <div class="np-row">
-      <span class="np-label">Hours</span>
-      <span class="np-val" id="np-h">00</span>
+      <span class="np-label og-label">Hours</span>
+      <span class="np-val og-display" id="np-h">00</span>
       <span class="np-unit">h</span>
     </div>
     <div class="np-row">
-      <span class="np-label">Minutes</span>
-      <span class="np-val" id="np-m">00</span>
+      <span class="np-label og-label">Minutes</span>
+      <span class="np-val og-display" id="np-m">00</span>
       <span class="np-unit">m</span>
     </div>
     <div class="np-row">
-      <span class="np-label">Seconds</span>
-      <span class="np-val accent" id="np-s">00</span>
+      <span class="np-label og-label">Seconds</span>
+      <span class="np-val og-display acc" id="np-s">00</span>
       <span class="np-unit">s</span>
     </div>
 
     <div class="np-bar" aria-hidden="true"><div class="np-bar-fill" id="np-bar"></div></div>
 
-    <div class="np-footnote">
+    <div class="np-footnote og-label">
       <span><b>Notice given</b><br><span id="np-from">—</span></span>
       <span>Period · <b id="np-len">—</b></span>
       <span class="right"><b>Ends</b><br><span id="np-to">—</span></span>
     </div>
     <div class="np-controls" role="group" aria-label="Preset notice periods">
-      <button class="np-control" data-ms="300000" data-label="5 min" aria-pressed="true">5M</button>
-      <button class="np-control" data-ms="3600000" data-label="1 hour">1H</button>
-      <button class="np-control" data-ms="86400000" data-label="1 day">1D</button>
-      <button class="np-control" data-ms="604800000" data-label="1 week">1W</button>
-      <button class="np-control" data-ms="2592000000" data-label="30 days">30D</button>
+      <button class="np-control og-btn sm" data-ms="300000" data-label="5 min" aria-pressed="true">5M</button>
+      <button class="np-control og-btn sm" data-ms="3600000" data-label="1 hour">1H</button>
+      <button class="np-control og-btn sm" data-ms="86400000" data-label="1 day">1D</button>
+      <button class="np-control og-btn sm" data-ms="604800000" data-label="1 week">1W</button>
+      <button class="np-control og-btn sm" data-ms="2592000000" data-label="30 days">30D</button>
     </div>
   </div>
 </section>

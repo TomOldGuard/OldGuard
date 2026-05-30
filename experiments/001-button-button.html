@@ -10,10 +10,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/components.css">
 <style>
   /* ---- 001 staging ------------------------------------------------ */
   .bb-stage { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-  .bb-counter { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
   .bb-counter b { color: var(--accent); font-weight: 500; }
   .bb-btn {
     font-family: var(--mono);
@@ -37,7 +37,7 @@
   .bb-btn > .bb-btn > .bb-btn > .bb-btn { padding: 8px 10px; font-size: 10px; }
   .bb-btn > .bb-btn > .bb-btn > .bb-btn > .bb-btn { padding: 6px 8px; font-size: 9px; }
 
-  .bb-helper { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; max-width: 38ch; text-align: center; }
+  .bb-helper { max-width: 38ch; text-align: center; }
 </style>
 </head>
 <body>
@@ -52,9 +52,9 @@
 
 <section class="exp-stage" data-screen-label="001 Button button">
   <div class="bb-stage">
-    <div class="bb-counter">DEPTH · <b id="bb-depth">0</b> · CLICKS · <b id="bb-clicks">0</b></div>
+    <div class="bb-counter og-label">DEPTH · <b id="bb-depth">0</b> · CLICKS · <b id="bb-clicks">0</b></div>
     <button class="bb-btn" id="bb-root">CLICK</button>
-    <p class="bb-helper">Clicking a button puts a button inside it. The button is still a button. The button button is also a button.</p>
+    <p class="bb-helper og-label">Clicking a button puts a button inside it. The button is still a button. The button button is also a button.</p>
   </div>
 </section>
 

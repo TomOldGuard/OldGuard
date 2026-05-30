@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/components.css">
 <style>
   /* ---- 011 — Ronnie The Bear: a procedural growl synth ---- */
   .rn {
@@ -105,12 +106,6 @@
     flex-direction: column;
     gap: 5px;
   }
-  .rn-readout .lbl {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-  }
   .rn-readout .mood {
     font-size: 26px;
     font-weight: 500;
@@ -150,18 +145,42 @@
     align-items: baseline;
     margin-bottom: 8px;
   }
-  .rn-ctl .ctl-name {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-  }
   .rn-ctl .ctl-val {
     font-size: 13px;
     font-weight: 500;
     font-variant-numeric: tabular-nums;
     color: var(--accent);
   }
+  .rn-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 2px;
+    background: var(--line);
+    outline: none;
+    cursor: pointer;
+  }
+  .rn-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    border-radius: 50%;
+    cursor: grab;
+  }
+  .rn-range::-webkit-slider-thumb:active { cursor: grabbing; }
+  .rn-range::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    border-radius: 50%;
+    cursor: grab;
+  }
+  .rn-range::-moz-range-track { height: 2px; background: var(--line); }
+
   .rn-range {
     -webkit-appearance: none;
     appearance: none;
@@ -238,19 +257,6 @@
     gap: 3px;
   }
   .rn-stats .cell:last-child { border-right: none; }
-  .rn-stats .lbl {
-    font-size: 9px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-  .rn-stats .val {
-    font-size: 22px;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
-  }
-  .rn-stats .val.acc { color: var(--accent); }
 </style>
 </head>
 <body>
@@ -277,7 +283,7 @@
 
     <aside class="rn-side">
       <div class="rn-readout">
-        <span class="lbl">Mood</span>
+        <span class="og-label">Mood</span>
         <span class="mood" id="rn-mood">Resting</span>
         <span class="desc" id="rn-desc">drag across Ronnie to growl</span>
         <div class="rn-vu"><div class="fill" id="rn-vu"></div></div>
@@ -286,17 +292,17 @@
       <div class="rn-controls">
         <div class="rn-ctl">
           <div class="ctl-top">
-            <span class="ctl-name">Pitch</span>
+            <span class="og-label">Pitch</span>
             <span class="ctl-val" id="rn-pitch-val">110 Hz</span>
           </div>
-          <input class="rn-range" id="rn-pitch" type="range" min="48" max="220" value="110" step="1" aria-label="Pitch">
+          <input class="og-range" id="rn-pitch" type="range" min="48" max="220" value="110" step="1" aria-label="Pitch">
         </div>
         <div class="rn-ctl">
           <div class="ctl-top">
-            <span class="ctl-name">Grit</span>
+            <span class="og-label">Grit</span>
             <span class="ctl-val" id="rn-grit-val">45%</span>
           </div>
-          <input class="rn-range" id="rn-grit" type="range" min="0" max="100" value="45" step="1" aria-label="Grit">
+          <input class="og-range" id="rn-grit" type="range" min="0" max="100" value="45" step="1" aria-label="Grit">
         </div>
       </div>
 
@@ -310,8 +316,8 @@
       </div>
 
       <div class="rn-stats">
-        <div class="cell"><span class="lbl">Roars</span><span class="val acc" id="rn-count">0</span></div>
-        <div class="cell"><span class="lbl">Longest</span><span class="val" id="rn-long">—</span></div>
+        <div class="cell"><span class="og-label">Roars</span><span class="og-stat-val acc" id="rn-count">0</span></div>
+        <div class="cell"><span class="og-label">Longest</span><span class="og-stat-val" id="rn-long">—</span></div>
       </div>
 
     </aside>

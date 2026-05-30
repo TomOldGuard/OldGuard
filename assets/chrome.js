@@ -89,6 +89,8 @@
   }
 
   // ---- ONE-CALL SETUP for experiment detail pages --------------
+  // Renders header, footer and prev/next nav with the paths every
+  // experiment shares. Replaces the three-line boilerplate per page.
   function initExp(slug) {
     renderHeader({ homeHref: "../index.html" });
     renderFooter({ colophonHref: "../colophon.html" });

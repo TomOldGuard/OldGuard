@@ -10,21 +10,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/components.css">
 <style>
   /* ---- 007 — Magic Eye²: autostereogram of an eye ---------------- */
   .me { width: 100%; max-width: 840px; display: grid; gap: 20px; }
 
-  .me-hint {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 16px;
-    flex-wrap: wrap;
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
   .me-hint b { color: var(--fg); font-weight: 500; }
 
   .me-stage {
@@ -81,62 +71,18 @@
     border-radius: 50%;
   }
 
-  .me-readout {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    border: var(--rule);
-  }
-  @media (max-width: 600px) {
-    .me-readout { grid-template-columns: repeat(2, 1fr); }
-    .me-cell:nth-child(2) { border-right: none; }
-    .me-cell:nth-child(1), .me-cell:nth-child(2) { border-bottom: var(--rule); }
-  }
-  .me-cell {
-    padding: 12px 14px;
-    border-right: var(--rule);
-    display: flex; flex-direction: column; gap: 4px;
-  }
-  .me-cell:last-child { border-right: none; }
-  .me-cell .lbl {
-    font-size: 10px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.12em;
-  }
-  .me-cell .val {
-    font-size: 16px; font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
-  }
-  .me-cell .val.acc { color: var(--accent); }
+  .me-readout .og-stat-val { font-size: 16px; }
 
   .me-actions {
     display: flex; gap: 8px;
     justify-content: flex-end;
     flex-wrap: wrap;
   }
-  .me-btn {
-    border: 1px solid var(--fg);
-    background: transparent;
-    color: var(--fg);
-    padding: 10px 16px;
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    white-space: nowrap;
-    display: inline-flex; align-items: center; gap: 8px;
-    transition: background 120ms, color 120ms, border-color 120ms;
-  }
-  .me-btn:hover { background: var(--dim); color: var(--accent); border-color: var(--accent); }
-  .me-btn.subtle {
-    border-color: var(--line);
-    color: var(--muted);
-  }
   .me-btn.subtle:hover { background: transparent; border-color: var(--accent); color: var(--accent); }
 
   @media (max-width: 600px) {
     .me-actions { width: 100%; }
-    .me-actions .me-btn { flex: 1; justify-content: center; }
+    .me-actions .og-btn { flex: 1; justify-content: center; }
   }
 
   .me-eye-mark {
@@ -168,7 +114,7 @@
 <section class="exp-stage" data-screen-label="007 Magic Eye Squared">
   <div class="me">
 
-    <div class="me-hint">
+    <div class="me-hint og-meta">
       <span>Soften your gaze · let your eyes drift past the screen · the hidden form floats forward</span>
     </div>
 
@@ -181,15 +127,15 @@
       </div>
     </div>
 
-    <div class="me-readout">
-      <div class="me-cell"><span class="lbl">Resolution</span><span class="val">720 × 480</span></div>
-      <div class="me-cell"><span class="lbl">Tile width</span><span class="val">120 px</span></div>
-      <div class="me-cell"><span class="lbl">Seed</span><span class="val" id="me-seed">000000</span></div>
+    <div class="me-readout og-stats" style="--og-cols:3; --og-cols-sm:2">
+      <div class="og-stat"><span class="og-label">Resolution</span><span class="og-stat-val">720 × 480</span></div>
+      <div class="og-stat"><span class="og-label">Tile width</span><span class="og-stat-val">120 px</span></div>
+      <div class="og-stat"><span class="og-label">Seed</span><span class="og-stat-val" id="me-seed">000000</span></div>
     </div>
 
     <div class="me-actions">
-      <button class="me-btn subtle" id="me-reveal">Hold to reveal</button>
-      <button class="me-btn" id="me-generate">Regenerate</button>
+      <button class="og-btn subtle" id="me-reveal">Hold to reveal</button>
+      <button class="og-btn" id="me-generate">Regenerate</button>
     </div>
 
   </div>

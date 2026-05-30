@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/components.css">
 <style>
   /* ---- 010 — Onigiri: the konbini 1·2·3 wrapper, unwrapped ---- */
   .on {
@@ -131,12 +132,6 @@
     gap: 6px;
     justify-content: center;
   }
-  .on-readout .lbl {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-  }
   .on-readout .filling {
     font-size: 24px;
     font-weight: 500;
@@ -170,34 +165,8 @@
     gap: 3px;
   }
   .on-stats .cell:last-child { border-right: none; }
-  .on-stats .lbl {
-    font-size: 9px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-  .on-stats .val {
-    font-size: 22px;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
-  }
-  .on-stats .val.acc { color: var(--accent); }
 
-  .on-actions { display: grid; grid-template-columns: 1fr 1fr; }
-  .on-actions button {
-    padding: 13px 8px;
-    border-right: var(--rule);
-    font-family: var(--mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    cursor: pointer;
-    transition: background 120ms, color 120ms;
-  }
   .on-actions button:last-child { border-right: none; }
-  .on-actions button:hover { background: var(--dim); color: var(--accent); }
 </style>
 </head>
 <body>
@@ -225,7 +194,7 @@
       </div>
 
       <div class="on-readout">
-        <span class="lbl">Filling</span>
+        <span class="og-label">Filling</span>
         <span class="filling sealed" id="on-filling">Sealed</span>
         <span class="note" id="on-note">open to reveal</span>
         <span class="hint">
@@ -234,13 +203,13 @@
       </div>
 
       <div class="on-stats">
-        <div class="cell"><span class="lbl">Opened</span><span class="val acc" id="on-count">0</span></div>
-        <div class="cell"><span class="lbl">Nori</span><span class="val" id="on-state">Crisp</span></div>
+        <div class="cell"><span class="og-label">Opened</span><span class="og-stat-val acc" id="on-count">0</span></div>
+        <div class="cell"><span class="og-label">Nori</span><span class="og-stat-val" id="on-state">Crisp</span></div>
       </div>
 
-      <div class="on-actions">
-        <button id="on-auto">Auto-open</button>
-        <button id="on-new">New onigiri</button>
+      <div class="on-actions og-cellbtns">
+        <button class="og-cellbtn" id="on-auto">Auto-open</button>
+        <button class="og-cellbtn" id="on-new">New onigiri</button>
       </div>
     </aside>
 
