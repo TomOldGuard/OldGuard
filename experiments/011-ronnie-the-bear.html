@@ -614,13 +614,26 @@
   // ============================================================
   let liveVoice = null, roarStart = 0;
 
-  function beginRoar() {
+  // iOS Safari: AudioContext starts "suspended" and resume() is async, so the
+  // very first tap would schedule oscillators before the clock is running and
+  // come out silent (you'd need a 2nd tap). Always wait for the context to be
+  // "running" before starting a voice.
+  function withRunningCtx(cb) {
     ensureCtx();
-    if (liveVoice) liveVoice.release();
-    liveVoice = startVoice(S.pitch, S.grit, true);
-    S.roaring = true;
-    roarStart = performance.now();
-    updatePanel();
+    if (actx.state === "running") { cb(); return; }
+    actx.resume().then(cb).catch(cb);
+  }
+
+  function beginRoar() {
+    withRunningCtx(() => {
+      // user may have already lifted before resume() resolved on first tap
+      if (!dragging) return;
+      if (liveVoice) liveVoice.release();
+      liveVoice = startVoice(S.pitch, S.grit, true);
+      S.roaring = true;
+      roarStart = performance.now();
+      updatePanel();
+    });
   }
   function updateRoar() {
     if (liveVoice) liveVoice.set(S.pitch, S.grit);
@@ -633,12 +646,13 @@
   }
   // a one-shot roar (button / preset tap)
   function shotRoar() {
-    ensureCtx();
-    const v = startVoice(S.pitch, S.grit, false);
-    S.roaring = true;
-    updatePanel();
-    const dur = 0.6 + S.grit * 0.8;
-    setTimeout(() => { S.roaring = false; bankRoar(dur); updatePanel(); }, dur * 1000 + 80);
+    withRunningCtx(() => {
+      const v = startVoice(S.pitch, S.grit, false);
+      S.roaring = true;
+      updatePanel();
+      const dur = 0.6 + S.grit * 0.8;
+      setTimeout(() => { S.roaring = false; bankRoar(dur); updatePanel(); }, dur * 1000 + 80);
+    });
   }
 
   function bankRoar(dur) {
