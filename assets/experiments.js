@@ -7,6 +7,12 @@
 
 window.EXPERIMENTS = [
   {
+    num: "012",
+    slug: "obscura-camera",
+    title: "Obscura Camera",
+    href: "experiments/012-obscura-camera.html"
+  },
+  {
     num: "011",
     slug: "ronnie-the-bear",
     title: "Ronnie The Bear",

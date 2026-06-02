@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>012 · Obscura Camera — Old Guard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="../assets/logo.png">
+<link rel="apple-touch-icon" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/components.css">
+<style>
+  /* ---- 012 — Obscura Camera: the live feed, redrawn in glyphs or dots ---- */
+  .oc {
+    width: 100%;
+    max-width: 1040px;
+    border: var(--rule);
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* the screen — the rendered feed fills it edge to edge */
+  .oc-screen {
+    position: relative;
+    width: 100%;
+    height: clamp(360px, 58vh, 640px);
+    overflow: hidden;
+    border-bottom: var(--rule);
+    background: var(--bg);
+  }
+  .oc-screen canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* the source video is never shown — it only feeds the sampler */
+  .oc-video {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    opacity: 0;
+    pointer-events: none;
+    left: -10px;
+    top: -10px;
+  }
+
+  /* corner readout — mode · grid · fps */
+  .oc-readout {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    pointer-events: none;
+    transition: opacity 300ms;
+  }
+  .oc-readout .live {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: oc-pulse 1.6s ease-in-out infinite;
+  }
+  .oc-readout b { color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums; }
+  @keyframes oc-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+  @media (prefers-reduced-motion: reduce) { .oc-readout .live { animation: none; } }
+  .oc-screen:not(.live) .oc-readout { opacity: 0; }
+
+  /* the permission gate / status overlay */
+  .oc-gate {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 32px;
+    text-align: center;
+    background: var(--bg);
+    /* faint sampling grid so the empty stage still reads as a camera */
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .oc-screen.live .oc-gate { display: none; }
+  .oc-gate .lens {
+    width: 52px;
+    height: 52px;
+    border: 1.5px solid var(--fg);
+    border-radius: 50%;
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+  .oc-gate .lens::after {
+    content: "";
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .oc-gate .gate-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+  }
+  .oc-gate .gate-note {
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 42ch;
+    text-wrap: pretty;
+  }
+  .oc-gate.error .lens { border-color: var(--accent); }
+  .oc-gate.error .lens::after { background: transparent; }
+
+  /* control bar — 1px grid gaps draw the dividers, regardless of wrap */
+  .oc-bar {
+    display: grid;
+    grid-template-columns: auto auto 1fr 1fr auto;
+    gap: 1px;
+    background: var(--line);
+  }
+  .oc-group {
+    background: var(--bg);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .oc-group .grp-label { color: var(--muted); }
+
+  /* segmented control sits in a hairline frame */
+  .oc-seg { border: var(--rule); }
+
+  /* slider group */
+  .oc-slabel {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .oc-slabel .v {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .oc-toggles {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .oc-toggles .og-btn { flex: 1; min-width: 84px; }
+
+  @media (max-width: 820px) {
+    .oc-bar { grid-template-columns: 1fr 1fr; }
+    .oc-toggles { grid-column: 1 / -1; }
+  }
+  @media (max-width: 460px) {
+    .oc-bar { grid-template-columns: 1fr; }
+    .oc-toggles .og-btn { min-height: 44px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header" data-header></header>
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="../index.html">Index</a>
+  <span>/</span>
+  <span class="here">012 · Obscura Camera</span>
+</nav>
+
+<section class="exp-stage" data-screen-label="012 Obscura Camera">
+  <div class="oc" id="oc">
+    <div class="oc-screen" id="oc-screen">
+      <canvas id="oc-canvas"></canvas>
+      <video class="oc-video" id="oc-video" playsinline muted></video>
+
+      <div class="oc-readout" aria-hidden="true">
+        <span class="live"></span>
+        <span id="oc-readout-text">ASCII · — · — fps</span>
+      </div>
+
+      <div class="oc-gate" id="oc-gate">
+        <div class="lens" aria-hidden="true"></div>
+        <div class="gate-title" id="oc-gate-title">Camera obscura</div>
+        <div class="gate-note" id="oc-gate-note">Point your webcam at the world and watch it resolve into glyphs and dots. The feed is processed in your browser and never leaves this device.</div>
+        <button class="og-btn" id="oc-start">Enable camera</button>
+      </div>
+    </div>
+
+    <div class="oc-bar">
+      <div class="oc-group">
+        <span class="og-label grp-label">Render</span>
+        <div class="og-cellbtns oc-seg" id="oc-mode">
+          <button class="og-cellbtn" data-mode="ascii" aria-pressed="true">ASCII</button>
+          <button class="og-cellbtn" data-mode="halftone" aria-pressed="false">Halftone</button>
+        </div>
+      </div>
+
+      <div class="oc-group">
+        <span class="og-label grp-label">Ink</span>
+        <div class="og-cellbtns oc-seg" id="oc-ink">
+          <button class="og-cellbtn" data-ink="mono" aria-pressed="true">Mono</button>
+          <button class="og-cellbtn" data-ink="coral" aria-pressed="false">Coral</button>
+        </div>
+      </div>
+
+      <div class="oc-group">
+        <div class="oc-slabel">
+          <span class="og-label grp-label">Resolution</span>
+          <span class="v" id="oc-res-val">Fine</span>
+        </div>
+        <input class="og-range" id="oc-res" type="range" min="7" max="22" value="10" aria-label="Resolution">
+      </div>
+
+      <div class="oc-group">
+        <div class="oc-slabel">
+          <span class="og-label grp-label">Contrast</span>
+          <span class="v" id="oc-con-val">1.0&times;</span>
+        </div>
+        <input class="og-range" id="oc-con" type="range" min="60" max="280" value="115" aria-label="Contrast">
+      </div>
+
+      <div class="oc-group oc-toggles">
+        <button class="og-btn sm" id="oc-invert" aria-pressed="false">Invert</button>
+        <button class="og-btn sm" id="oc-mirror" aria-pressed="true">Mirror</button>
+        <button class="og-btn sm" id="oc-snap">Save frame</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="exp-notes">
+  <div class="exp-notes-head">
+    <span class="num">012</span>
+    <span class="title">Obscura Camera</span>
+  </div>
+  <div class="exp-notes-inner">
+    <h3>Notes</h3>
+    <div>
+      <p>The oldest imaging trick there is — a room, a pinhole, the world cast upside-down on the far wall — handed to the browser. Here the live camera is sampled down to a coarse grid and each cell is redrawn as a single mark: a monospace glyph chosen by how dark it is, or a halftone dot grown to match. Step back and a face reassembles out of punctuation; lean in and it dissolves into type.</p>
+      <p>Switch the mark between <b>ASCII</b> glyphs and <b>Halftone</b> dots, and the ink between <b>Mono</b> and <b>Coral</b>. <b>Resolution</b> sets how fine the grid is sampled; <b>Contrast</b> pushes the midtones apart; <b>Invert</b> swaps light for dark and <b>Mirror</b> flips the selfie view. <b>Save frame</b> writes the current still to a PNG. Nothing is uploaded — the feed is read, drawn and discarded frame by frame, entirely on your machine.</p>
+    </div>
+  </div>
+</section>
+
+<nav class="exp-nav" data-exp-nav aria-label="Experiment navigation"></nav>
+
+<footer class="site-footer" data-footer></footer>
+
+<script src="../assets/experiments.js"></script>
+<script src="../assets/chrome.js"></script>
+<script>
+  OG.initExp("obscura-camera");
+
+  // ============================================================
+  // Elements + state
+  // ============================================================
+  const screenEl = document.getElementById("oc-screen");
+  const canvas   = document.getElementById("oc-canvas");
+  const ctx      = canvas.getContext("2d");
+  const video    = document.getElementById("oc-video");
+  const gate     = document.getElementById("oc-gate");
+  const gateTitle= document.getElementById("oc-gate-title");
+  const gateNote = document.getElementById("oc-gate-note");
+  const startBtn = document.getElementById("oc-start");
+  const readout  = document.getElementById("oc-readout-text");
+
+  // offscreen sampler — tiny canvas we downscale the feed into
+  const sCanvas = document.createElement("canvas");
+  const sCtx = sCanvas.getContext("2d", { willReadFrequently: true });
+
+  const RAMP = "@%#*+=-:.\u00a0";   // dark -> light coverage (last is nbsp = blank)
+
+  const state = {
+    mode: "ascii",
+    ink: "mono",
+    res: 10,          // base cell / font size in CSS px
+    contrast: 1.15,
+    invert: false,
+    mirror: true,
+    running: false
+  };
+
+  let W = 0, H = 0, DPR = 1;
+  let stream = null;
+
+  // ---- theme-aware colours (canvas can't read CSS vars directly) ----
+  let INK_FG = "#0a0a0a", INK_ACC = "#ED6E5D", PAPER = "#fafafa";
+  function readColours() {
+    const cs = getComputedStyle(document.documentElement);
+    INK_FG  = cs.getPropertyValue("--fg").trim()     || INK_FG;
+    INK_ACC = cs.getPropertyValue("--accent").trim() || INK_ACC;
+    PAPER   = cs.getPropertyValue("--bg").trim()     || PAPER;
+  }
+  readColours();
+  new MutationObserver(readColours).observe(document.documentElement,
+    { attributes: true, attributeFilter: ["data-theme"] });
+
+  // ============================================================
+  // Sizing
+  // ============================================================
+  function resize() {
+    const rect = screenEl.getBoundingClientRect();
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = rect.width; H = rect.height;
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+
+  // Work out the sampling grid for the current mode + resolution.
+  // Caps total cells so very fine settings stay smooth.
+  const CAP_CELLS = 13000;
+  let charRatio = 0.6; // measured advance/​fontsize for the mono face
+  function measureRatio(F) {
+    ctx.font = `${F}px ${getComputedStyle(document.documentElement).getPropertyValue("--mono") || "monospace"}`;
+    const w = ctx.measureText("M").width;
+    if (w > 0) charRatio = w / F;
+  }
+
+  function grid() {
+    let F = state.res;
+    if (state.mode === "ascii") {
+      measureRatio(F);
+      let charW = F * charRatio, charH = F;
+      let cols = Math.max(2, Math.floor(W / charW));
+      let rows = Math.max(2, Math.floor(H / charH));
+      // enforce the cell cap by nudging F up if needed
+      while (cols * rows > CAP_CELLS && F < 60) {
+        F += 1; charW = F * charRatio; charH = F;
+        cols = Math.max(2, Math.floor(W / charW));
+        rows = Math.max(2, Math.floor(H / charH));
+      }
+      return { F, charW, charH, cols, rows };
+    } else {
+      let cell = F;
+      let cols = Math.max(2, Math.floor(W / cell));
+      let rows = Math.max(2, Math.floor(H / cell));
+      while (cols * rows > CAP_CELLS && cell < 60) {
+        cell += 1;
+        cols = Math.max(2, Math.floor(W / cell));
+        rows = Math.max(2, Math.floor(H / cell));
+      }
+      return { cell, cols, rows };
+    }
+  }
+
+  // Downscale the live feed into a cols×rows buffer using cover-crop.
+  function sample(cols, rows) {
+    sCanvas.width = cols;
+    sCanvas.height = rows;
+    sCtx.save();
+    if (state.mirror) { sCtx.translate(cols, 0); sCtx.scale(-1, 1); }
+    const vw = video.videoWidth || cols, vh = video.videoHeight || rows;
+    const scale = Math.max(cols / vw, rows / vh);
+    const dw = vw * scale, dh = vh * scale;
+    sCtx.drawImage(video, (cols - dw) / 2, (rows - dh) / 2, dw, dh);
+    sCtx.restore();
+    return sCtx.getImageData(0, 0, cols, rows).data;
+  }
+
+  // brightness -> tone, with contrast + invert applied. returns 0..1 (1 = ink-heavy/dark)
+  function tone(r, g, b) {
+    let lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    lum = (lum - 0.5) * state.contrast + 0.5;       // contrast around mid grey
+    if (lum < 0) lum = 0; else if (lum > 1) lum = 1;
+    let dark = 1 - lum;                              // ink coverage
+    if (state.invert) dark = 1 - dark;
+    return dark;
+  }
+
+  // ============================================================
+  // Render
+  // ============================================================
+  function drawAscii(g) {
+    const data = sample(g.cols, g.rows);
+    ctx.fillStyle = PAPER;
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = (state.ink === "coral") ? INK_ACC : INK_FG;
+    ctx.font = `${g.F}px ${getComputedStyle(document.documentElement).getPropertyValue("--mono") || "monospace"}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const last = RAMP.length - 1;
+    for (let y = 0; y < g.rows; y++) {
+      const cy = (y + 0.5) * g.charH;
+      for (let x = 0; x < g.cols; x++) {
+        const i = (y * g.cols + x) * 4;
+        const dark = tone(data[i], data[i + 1], data[i + 2]);
+        const idx = Math.round(dark * last);
+        const ch = RAMP[idx];
+        if (ch === RAMP[last]) continue;            // blank cell, skip
+        ctx.fillText(ch, (x + 0.5) * g.charW, cy);
+      }
+    }
+  }
+
+  function drawHalftone(g) {
+    const data = sample(g.cols, g.rows);
+    ctx.fillStyle = PAPER;
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = (state.ink === "coral") ? INK_ACC : INK_FG;
+    const rMax = g.cell * 0.5 * 1.08;
+    ctx.beginPath();
+    for (let y = 0; y < g.rows; y++) {
+      const cy = (y + 0.5) * g.cell;
+      for (let x = 0; x < g.cols; x++) {
+        const i = (y * g.cols + x) * 4;
+        const dark = tone(data[i], data[i + 1], data[i + 2]);
+        if (dark < 0.04) continue;
+        const r = rMax * Math.pow(dark, 0.85);
+        const cx = (x + 0.5) * g.cell;
+        ctx.moveTo(cx + r, cy);
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      }
+    }
+    ctx.fill();
+  }
+
+  // ============================================================
+  // Loop + readout
+  // ============================================================
+  let lastG = null, frames = 0, fps = 0, fpsClock = performance.now();
+  function frame() {
+    if (state.running && video.readyState >= 2) {
+      const g = grid();
+      lastG = g;
+      if (state.mode === "ascii") drawAscii(g); else drawHalftone(g);
+
+      frames++;
+      const now = performance.now();
+      if (now - fpsClock >= 500) {
+        fps = Math.round(frames * 1000 / (now - fpsClock));
+        frames = 0; fpsClock = now;
+        const label = state.mode === "ascii" ? "ASCII" : "HALFTONE";
+        readout.innerHTML = `${label} · <b>${g.cols}\u00d7${g.rows}</b> · <b>${fps}</b> fps`;
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ============================================================
+  // Camera
+  // ============================================================
+  async function start() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      return fail("No camera API", "This browser doesn’t expose a camera to the page.");
+    }
+    startBtn.disabled = true;
+    startBtn.textContent = "Requesting…";
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false
+      });
+      video.srcObject = stream;
+      await video.play();
+      state.running = true;
+      screenEl.classList.add("live");
+      resize();
+    } catch (err) {
+      const denied = err && (err.name === "NotAllowedError" || err.name === "SecurityError");
+      fail(
+        denied ? "Camera blocked" : "No camera found",
+        denied
+          ? "Permission was denied. Allow camera access in your browser’s site settings, then try again."
+          : "Couldn’t reach a camera on this device. Check it isn’t in use by another app, then try again."
+      );
+    }
+  }
+
+  function fail(title, note) {
+    state.running = false;
+    screenEl.classList.remove("live");
+    gate.classList.add("error");
+    gateTitle.textContent = title;
+    gateNote.textContent = note;
+    startBtn.disabled = false;
+    startBtn.textContent = "Try again";
+  }
+
+  startBtn.addEventListener("click", start);
+
+  // ============================================================
+  // Controls
+  // ============================================================
+  function wireSeg(id, key, fn) {
+    const group = document.getElementById(id);
+    group.addEventListener("click", (e) => {
+      const b = e.target.closest("button");
+      if (!b) return;
+      state[key] = b.dataset[key];
+      group.querySelectorAll("button").forEach(x =>
+        x.setAttribute("aria-pressed", String(x === b)));
+      if (fn) fn();
+    });
+  }
+  wireSeg("oc-mode", "mode");
+  wireSeg("oc-ink", "ink");
+
+  const resEl = document.getElementById("oc-res");
+  const resVal = document.getElementById("oc-res-val");
+  function resLabel(F) {
+    if (F <= 11) return "Fine";
+    if (F <= 16) return "Medium";
+    return "Coarse";
+  }
+  resEl.addEventListener("input", () => {
+    state.res = Number(resEl.value);
+    resVal.textContent = resLabel(state.res);
+  });
+  // seed from default
+  state.res = Number(resEl.value);
+  resVal.textContent = resLabel(state.res);
+
+  const conEl = document.getElementById("oc-con");
+  const conVal = document.getElementById("oc-con-val");
+  conEl.addEventListener("input", () => {
+    state.contrast = Number(conEl.value) / 100;
+    conVal.innerHTML = state.contrast.toFixed(2) + "&times;";
+  });
+  // seed from default
+  state.contrast = Number(conEl.value) / 100;
+  conVal.innerHTML = state.contrast.toFixed(2) + "&times;";
+
+  function wireToggle(id, key, onLabel, offLabel) {
+    const btn = document.getElementById(id);
+    btn.addEventListener("click", () => {
+      state[key] = !state[key];
+      btn.setAttribute("aria-pressed", String(state[key]));
+      if (onLabel) btn.textContent = state[key] ? onLabel : offLabel;
+    });
+  }
+  wireToggle("oc-invert", "invert");
+  wireToggle("oc-mirror", "mirror");
+
+  // ---- snapshot -------------------------------------------------
+  document.getElementById("oc-snap").addEventListener("click", () => {
+    if (!state.running) return;
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const stamp = new Date().toISOString().replace(/[:T]/g, "-").slice(0, 19);
+      a.href = url;
+      a.download = `obscura-${state.mode}-${stamp}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, "image/png");
+  });
+
+  // ============================================================
+  // Boot
+  // ============================================================
+  let rt;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(resize, 120); });
+  document.addEventListener("visibilitychange", () => {
+    // pause the heavy loop when the tab is hidden
+    if (document.hidden) { /* rAF naturally throttles */ }
+  });
+  resize();
+  requestAnimationFrame(frame);
+</script>
+
+</body>
+</html>
